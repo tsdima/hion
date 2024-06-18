@@ -12,8 +12,8 @@ namespace Hion {
 		
 		private editor: UIPropertyEditor;
 		private points: ListBox;
-		private infoBox: Label;
-		private panel: HTMLElement;
+		private readonly infoBox: Label;
+		private panel: BuilderElementType;
 
 		onpropchange = (prop: ElementProperty) => {};
 		onadveditor = (item: PropertyEditorItem) => {};
@@ -27,14 +27,14 @@ namespace Hion {
 			this.layout = new VLayout(this, {});
 
 			this.editor = new UIPropertyEditor({});
-			
-			var tb = new ToolBar([
+
+			const tb = new ToolBar([
 				{
 					title: "",
 					tag: "props",
 					icon: 40,
 					click: () => {
-						if(tb.getButtonByTag("props").checked == "true")
+						if (tb.getButtonByTag("props").checked == "true")
 							this.visible = false;
 						this.points.hide();
 						this.editor.show();
@@ -53,7 +53,7 @@ namespace Hion {
 						tb.getButtonByTag("props").checked = false;
 					}
 				}
-			]);
+			])
 			tb.getButtonByTag("props").checked = true;
 			this.add(tb);
 			this.panel = new Builder(this._ctl).div("pan").div("content").element;
@@ -61,7 +61,7 @@ namespace Hion {
 			this.points = new ListBox({checkboxes: true});
 			this.points.hide();
 			this.points.oncheck = (item, text) => {
-				var e = this.selMan.items[0];
+				const e = this.selMan.items[0]
 				if(e.findPointByName(item.point.name)) {
 					e.removePoint(item.point.name);
 				}
@@ -71,18 +71,18 @@ namespace Hion {
 				this.onpropchange(null);
 			};
 			this.points.onselect = (item, text) => {
-				var e = this.selMan.items[0];
+				const e = this.selMan.items[0]
 				this.infoBox.caption = this.editor.translator.translate(e.getPointInfo(item.point));
 			};
 			this.panel.appendChild(this.points.getControl());
-			
-			var iPanel = new Panel({height: getOptionInt("prop_info_height", 50)});
+
+			const iPanel = new Panel({ height: getOptionInt("prop_info_height", 50) })
 			iPanel.layout.setOptions({padding: 3});
 			this.infoBox = new Label({});
 			iPanel.add(this.infoBox);
 			this.add(iPanel);
-			
-			var splitter = new Splitter({edge: 0});
+
+			const splitter = new Splitter({ edge: 0 })
 			splitter.setManage(iPanel);
 			splitter.onresize = () => setOptionInt("prop_info_height", iPanel.height);
 			

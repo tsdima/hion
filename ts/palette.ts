@@ -15,8 +15,8 @@ namespace Hion {
 		private palette: Builder;
 		private hint: Hint;
 		private currentPack: string;
-		private cache: ElementsCacheList;
-		private selected: HTMLElement;
+		private readonly cache: ElementsCacheList;
+		private selected: BuilderElementType;
 		
 		constructor(options) {
 			super(options);
@@ -36,11 +36,11 @@ namespace Hion {
 			this.currentPack = "";
 		}
 
-		getContainer(): HTMLElement {
+		getContainer(): BuilderElementType {
 			return this.palette.element;
 		}
 
-		private selElement(obj: HTMLElement, id: string) {
+		private selElement(obj: BuilderElementType, id: string) {
 			if(this.selected) {
 				this.selected.removeAttribute("selected");
 			}
@@ -69,7 +69,7 @@ namespace Hion {
 			this.palette.html("");
 			
 			if(this.cache[pack.name]) {
-				for(var item of this.cache[pack.name])
+				for(const item of this.cache[pack.name])
 					this.palette.append(item);
 				return;
 			}
@@ -79,13 +79,13 @@ namespace Hion {
 			}
 			
 			// create tabs
-			var tabs: TabList = {};
-			for (var i in pack.elements) {
-				var element = pack.elements[i];
+			const tabs: TabList = {}
+			for (const i in pack.elements) {
+				const element = pack.elements[i];
 				if(isValidTab(element.tab) && !tabs[element.tab]) {
-					var tab = new Spoiler({
+					const tab = new Spoiler({
 						caption: pack.translate("tab." + element.tab)
-					}) as PaletteSpoiler;
+					}) as PaletteSpoiler
 					tab.name = element.tab;
 					tabs[element.tab] = tab;
 					this.add(tab);
@@ -94,7 +94,7 @@ namespace Hion {
 			
 			// elements
 			for (let id in pack.elements) {
-				var element = pack.elements[id];
+				const element = pack.elements[id];
 				if(isValidTab(element.tab)) {
 					if(element.group) {
 						tabs[element.tab].body().div("group").html(pack.translate("group." + id));
@@ -102,9 +102,9 @@ namespace Hion {
 					else {
 						let e = tabs[element.tab].body().div("element")
 							.on("onmouseenter", (event: MouseEvent) => {
-								var tpl = pack.elements[id];
-								var h = this.hint.body();
-								var header = h.div("header");
+								const tpl = pack.elements[id]
+								const h = this.hint.body()
+								const header = h.div("header")
 								header.html(pack.translate(id));
 								h.n("div").html(pack.translate("el." + id));
 								this.hint.show(event.clientX + 16, event.clientY + 16);
@@ -156,8 +156,8 @@ namespace Hion {
 							}
 						}
 					}
-				};
+				}
 			}
-		};
+		}
 	}
 }

@@ -307,7 +307,7 @@ namespace Hion {
 					this.editor.beginOperation(ME_ADDELEMENT_POINT, obj.obj);
 				}
 				else {
-					var element = this.editor.addElement(this.editor.emouse.obj, x, y);
+					const element = this.editor.addElement(this.editor.emouse.obj, x, y)
 
 					if((flags & 0x1) === 0) {
 						palette.unSelect();
@@ -324,7 +324,7 @@ namespace Hion {
 			}
 		}
 		up(x: number, y: number, button: number, obj, flags: number) {
-			return (flags & 0x1) === 0;;
+			return (flags & 0x1) === 0;
 		}
 		cursor(x: number, y: number, obj) {
 			if(obj) {
@@ -340,20 +340,21 @@ namespace Hion {
 	}
 
 	class MouseOperationSelectRegion extends MouseOperation {
-		private timerId: number = 0;
+		private timerId: NodeJS.Timeout
+
 		begin() {
 			this.timerId = setInterval(() => {
 				if(!this.editor.isOperation(ME_SELRECT)) {
 					clearInterval(this.timerId);
 					return;
 				}
-				var ctl = this.editor.getControl().firstChild as HTMLElement;
-				var tx = ctl.scrollLeft;
-				var ty = ctl.scrollTop;
-				var dx = 0;
-				var dy = 0;
-				var cY = MouseOperation.curY*this.editor.scale;
-				var cX = MouseOperation.curX*this.editor.scale;
+				const ctl = this.editor.getControl().firstChild as HTMLElement
+				const tx = ctl.scrollLeft
+				const ty = ctl.scrollTop
+				let dx = 0
+				let dy = 0
+				const cY = MouseOperation.curY * this.editor.scale
+				const cX = MouseOperation.curX * this.editor.scale
 				if(cY > this.editor.height + ty - 20 && ctl.clientHeight + ctl.scrollTop + 5 <= ctl.scrollHeight) {
 					dy = 5;
 				}
@@ -690,7 +691,7 @@ namespace Hion {
 		public pasteObj: PasteObject;
 
 		private old_cursor: string;
-		private ctx: CanvasRenderingContext2D;
+		private readonly ctx: CanvasRenderingContext2D;
 		
 		mouseHandlers: Array<MouseOperation>;
 		private mouseOperationIndex: number;
@@ -715,7 +716,7 @@ namespace Hion {
 		constructor (options) {
 			super(options);
 
-			var c = new Builder().div("canvas");
+			const c = new Builder().div("canvas")
 			this._ctl = c.element;
 			this.canvas = c.div("scrollbox").n("canvas");
 

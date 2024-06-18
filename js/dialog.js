@@ -1,25 +1,25 @@
-var drag_x = 0;
-var drag_y = 0;
-var drag_obj = null;
-var actionState = 0;
+let drag_x = 0
+let drag_y = 0
+let drag_obj = null
+let actionState = 0
 
 /* global ModalFrame, Builder */
 
 function GetPos(offTrial) {
-	var offL=0;
-	var offT=0;
+	let offL= 0
+	let offT= 0
 
-	while(offTrial) {
-		offL+=offTrial.offsetLeft - offTrial.scrollLeft;
-		offT+=offTrial.offsetTop - offTrial.scrollTop;
-		offTrial=offTrial.offsetParent;
+	while (offTrial) {
+		offL += offTrial.offsetLeft - offTrial.scrollLeft
+		offT += offTrial.offsetTop - offTrial.scrollTop
+		offTrial = offTrial.offsetParent
 	}
 
-	return {left:offL , top:offT};
+	return { left: offL, top: offT }
 } 
 
 window.HTMLElement.prototype.dialog = function(options) {
-	var body = this;
+	const body = this
 	
 	if(!body.running) {
 		body.running = true;
@@ -40,58 +40,54 @@ window.HTMLElement.prototype.dialog = function(options) {
 		}
 		
 		body.getCursorState = function(event) {
-			var pos = GetPos(this);
-			var x = event.clientX - pos.left;
-			var y = event.clientY - pos.top;
+			const pos = GetPos(this)
+			const x = event.clientX - pos.left
+			const y = event.clientY - pos.top
 		
 			if(x >= body.offsetWidth - 7 && y >= body.offsetHeight - 7) {
-				return 5;
-			}
-			else if(x < 3) {
-				return 1;
-			}
-			else if(x >= body.offsetWidth - 3) {
-				return 2;
-			}
-			else if(y < 3) {
-				return 3;
-			}
-			else if(y >= body.offsetHeight - 3) {
-				return 4;
+				return 5
+			} else if(x < 3) {
+				return 1
+			} else if(x >= body.offsetWidth - 3) {
+				return 2
+			} else if(y < 3) {
+				return 3
+			} else if(y >= body.offsetHeight - 3) {
+				return 4
 			}
 			
-			return 0;
-		};
+			return 0
+		}
 		
-		if(options.resize) {
-			body.setAttribute("resize", true);
-			body.oldState = 0;
+		if (options.resize) {
+			body.setAttribute("resize", true)
+			body.oldState = 0
 			body.onmousedown = function(event) {
-				actionState = this.getCursorState(event);
+				actionState = this.getCursorState(event)
 				if(actionState) {
-					drag_obj = this;
-					drag_x = event.clientX;
-					drag_y = event.clientY;
+					drag_obj = this
+					drag_x = event.clientX
+					drag_y = event.clientY
 				}
-			};
+			}
 
 			body.onmousemove = function(event) {
-				var state = this.getCursorState(event);
-				if(!drag_obj && body.oldState != state) {
-					body.oldState = state;
-					this.style.cursor = ["", "w-resize", "e-resize", "n-resize", "s-resize", "se-resize"][state];
+				const state = this.getCursorState(event)
+				if(!drag_obj && body.oldState !== state) {
+					body.oldState = state
+					this.style.cursor = ["", "w-resize", "e-resize", "n-resize", "s-resize", "se-resize"][state]
 				}
-			};
+			}
 
 			body.onmouseup = function() {
 				actionState = 0;
-			};
+			}
 		}
 
-		var cap = new Builder().n("div").class("caption");
+		const cap = new Builder().n("div").class("caption")
 		
 		if(options.icon) {
-			cap.style("backgroundImage", "url('" + options.icon + "')");
+			cap.style("backgroundImage", "url('" + options.icon + "')")
 		}
 
 		cap.n("div").class("text").html(options.title).on("onmousedown", function(event) {

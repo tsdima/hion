@@ -1,0 +1,33 @@
+{
+  "name": "hion",
+  "version": "1.5.2",
+  "description": "WEB Visual IDE",
+  "main": "ts/main.ts",
+  "scripts": {
+    "start": "webpack-dev-server --config config/webpack.dev.js",
+    "build": "webpack --config config/webpack.prod.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hiasmstudio/hion.git"
+  },
+  "keywords": [
+    "web",
+    "ide",
+    "visual",
+    "builder",
+    "constructor"
+  ],
+  "author": "Dmitriy Vlasov",
+  "license": "GPL-3.0-or-later",
+  "homepage": "http://ide.hiasm.com/",
+  "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "html-webpack-plugin": "^5.6.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5",
+    "webpack": "^5.92.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  }
+}

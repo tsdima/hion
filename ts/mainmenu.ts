@@ -56,8 +56,8 @@ namespace Hion {
 			return this.body.child(index) as MenuItemElement;
 		}
 
-		getControl(): HTMLElement {
-			return this.body.element;
+		getControl(): BuilderElementType {
+			return this.body.element
 		}
 	}
 }

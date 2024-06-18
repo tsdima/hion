@@ -5,14 +5,14 @@ namespace Hion {
 		public openSave: boolean;
 		private selDir: string;
 		onfilename = (fileName: string) => {};
-		onerror = (error) => {};
-		private form: Dialog;
-		private fileName: Edit;
+		onerror = (error: { code: number, info: string }) => {};
+		private readonly form: Dialog;
+		private readonly fileName: Edit;
 		private direction: Label;
-		private address: Panel;
-		private btn: Button;
+		private readonly address: Panel;
+		private readonly btn: Button;
 		private places: ListBox;
-		private listBox: UISimpleTable;
+		private readonly listBox: UISimpleTable;
 
 		constructor() {
 			this.location = "/examples";
@@ -23,13 +23,13 @@ namespace Hion {
 				height: 340,
 				buttons: [{
 					text: "Save/Open",
-					click: (dialog) => this._openSave()
+					click: () => this._openSave()
 				}]
 			});
 
 			this.form.layout = new VLayout(this.form, {});
-			
-			var hpanel = new Panel({theme: "panel-clear"});
+
+			let hpanel = new Panel({ theme: "panel-clear" })
 			hpanel.setLayoutOptions({shrink: 0});
 			hpanel.layout.setOptions({padding: 5});
 			this.fileName = new Edit({});
@@ -49,14 +49,13 @@ namespace Hion {
 			
 			this.btn = new Button({caption: "Create folder"});
 			this.btn.addListener("click", () => {
-				var folder = prompt("Enter folder name", "");
+				const folder = prompt("Enter folder name", "")
 				if(folder) {
-					var node = getFileNode(this.location + "/" + folder);
+					const node = getFileNode(this.location + "/" + folder)
 					node.mkdir((error) => {
 						if(error) {
 							this.onerror({code: error, info: node.location()});
-						}
-						else {
+						} else {
 							this.navigate(node.location());
 						}
 					});
@@ -71,8 +70,9 @@ namespace Hion {
 			hpanel.add(this.places = new ListBox({theme: "borderin"}));
 			this.places.width = 100;
 			this.places.onselect = (item, text) => {
-				if(!this.selectOnly)
+				if(!this.selectOnly) {
 					this.navigate("/" + text.toLowerCase());
+				}
 			};
 			
 			this.listBox = new UISimpleTable({theme: "borderin", showgrid: false, lineheight: 13,
@@ -84,43 +84,39 @@ namespace Hion {
 				]});
 			this.listBox.tabIndex = 0;
 			this.listBox.setLayoutOptions({grow: 1});
-			this.listBox.onrowselect = (item, index) => {
-				var text = item.data[1];
+			this.listBox.onrowselect = (item) => {
+				const text = item.data[1]
 				if(item.data[4]) {
 					if(!this.openSave) {
 						this.fileName.text = "";
 					}
 					this.selDir = text;
-				}
-				else {
+				} else {
 					this.fileName.text = text;
 				}
 			};
 			this.listBox.onrowclick = (item, index) => {
-				var text = item.data[1];
+				const text = item.data[1]
 				if(item.data[4]) {
 					if(text === "..") {
-						this.navigate(this.location.substr(0, this.location.lastIndexOf("/")));
-					}
-					else {
+						this.navigate(this.location.substring(0, this.location.lastIndexOf("/")));
+					} else {
 						this.navigate(this.location + "/" + text);
 					}
-				}
-				else {
+				} else {
 					this._openSave();
 				}
 			};
-			this.listBox.addListener("keydown", (event) => {
+			this.listBox.addListener("keydown", (event: KeyboardEvent) => {
 				if(event.keyCode === 46) {
-					var row = this.listBox.getSelectionRow();
+					const row = this.listBox.getSelectionRow()
 					if(row) {
-						var node = getFileNode(this.location + "/" + row.data[1]);
-						
-						node.remove(function(error) {
+						const node = getFileNode(this.location + "/" + row.data[1])
+
+						node.remove((error) => {
 							if(error) {
 								this.onerror({code: error, info: node.location()});
-							}
-							else {
+							} else {
 								this.listBox.removeSelection();
 								if(row.index < this.listBox.size())
 									this.listBox.selectIndex(row.index);
@@ -135,28 +131,26 @@ namespace Hion {
 		}
 		
 		private _openSave() {
-			var text = this.fileName.text;
-			if(text) {
-				var fileName = this.location + "/" + text;
-				this.onfilename(fileName);
-			}
-			else if(this.selDir) {
-				this.navigate(this.location + "/" + this.selDir);
+			const text = this.fileName.text
+			if (text) {
+				this.onfilename(this.location + "/" + text)
+			} else if(this.selDir) {
+				this.navigate(this.location + "/" + this.selDir)
 			}
 		}
 
-		setAddress(folder) {
-			this.location = folder;
+		setAddress(folder: string) {
+			this.location = folder
 			
-			var lines = folder.substr(1).split("/");
+			const lines = folder.substring(1).split("/");
 			this.address.removeAll();
-			var addr = "";
-			for(var l of lines) {
-				addr += "/" + l;
-				let btnAddr = addr;
-				var btn = new Button({caption: l, theme: "button-dlg"});
-				btn.addListener("click", () => this.navigate(btnAddr));
-				this.address.add(btn);
+			let addr = ""
+			for(const l of lines) {
+				addr += "/" + l
+				let btnAddr = addr
+				const btn = new Button({caption: l, theme: "button-dlg"})
+				btn.addListener("click", () => this.navigate(btnAddr))
+				this.address.add(btn)
 			}
 		}
 		
@@ -186,24 +180,22 @@ namespace Hion {
 			this.form.show();
 		}
 		
-		save(addr) {
-			this.openSave = true;
-			var iPos = addr.lastIndexOf("/");
+		save(addr: string) {
+			this.openSave = true
+			const iPos = addr.lastIndexOf("/")
 			if(iPos > 0) {
-				var file = addr.substr(iPos+1);
-				this.fileName.text = file;
-				var place = addr.substr(0, iPos);
+				this.fileName.text = addr.substring(iPos + 1)
+				const place = addr.substring(0, iPos)
 				for(let i = 0; i < this.places.size(); i++) {
 					if(place.startsWith("/" + this.places.items[i].toLowerCase())) {
-						this.selectOnly = true;
-						this.places.selectIndex(i);
-						delete this.selectOnly;
-						break;
+						this.selectOnly = true
+						this.places.selectIndex(i)
+						delete this.selectOnly
+						break
 					}
 				}
 				this.navigate(place);
-			}
-			else {
+			} else {
 				this.navigate("/home");
 				this.fileName.text = addr;
 			}
@@ -218,34 +210,34 @@ namespace Hion {
 			this.form.close();
 		}
 
-		private _loadList(list: Array<FSNodeListItem>) {
+		private _loadList(list: Array<FSNode>) {
 			this.listBox.clear();
 
-			for(var node of list) {
-				var icon = node.isFile ? "img/mime-none.png" : "img/mime-folder.png";
-				if(node.name.indexOf(".") > 0) {
-					var ext = node.name.split(".").pop();
+			for(const node of list) {
+				let icon = node.isFile ? "img/mime-none.png" : "img/mime-folder.png";
+				if (node.name.indexOf(".") > 0) {
+					const ext = node.name.split(".").pop()
 					if(ext === "sha") {
-						icon = "img/sha.png";
+						icon = "img/sha.png"
 					}
 				}
-				this.listBox.addRow([icon, node.name, node.isFile ? node.sizeDisplay() : "", node.date.substr(0, 10), !node.isFile]);
+				this.listBox.addRow([icon, node.name, node.isFile ? node.sizeDisplay() : "", node.date.substring(0, 10), !node.isFile])
 			}
 		}
 		
-		navigate(folder) {
-			this.listBox.clear();
-			this.setAddress(folder);
+		navigate(folder: string) {
+			this.listBox.clear()
+			this.setAddress(folder)
 			
-			var node = getFileNode(folder);
+			const node = getFileNode(folder)
 			node.list((error, list) => {
 				if(error) {
-					this.onerror({code: error, info: node.location()});
+					this.onerror({code: error, info: node.location()})
 				}
 				else {
 					this._loadList(list);
 				}
-			});
+			})
 		}
 	}
 }

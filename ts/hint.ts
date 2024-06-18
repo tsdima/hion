@@ -1,7 +1,7 @@
 namespace Hion {
 	export class Hint {
 		private builder: Builder;
-		private timer: number;
+		private timer: NodeJS.Timeout;
 		private wasShow: boolean;
 
 		constructor() {
@@ -37,7 +37,7 @@ namespace Hion {
 				document.removeEventListener("touchstart", this.handleEvent);
 
 				clearTimeout(this.timer);
-				this.timer = 0;
+				this.timer = null;
 				if(this.wasShow) {
 					this.wasShow = false;
 					this.builder.erase();

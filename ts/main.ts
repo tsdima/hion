@@ -34,41 +34,38 @@ namespace Hion {
 		}
 	}
 
-	function makeItems(peCommands) {
-		var items = [];
-		for(var i in peCommands) {
-			var cmd = peCommands[i];
-			if(cmd === "-") {
-				items.push({title: cmd});
-			}
-			else {
+	function makeItems(peCommands: string[]) {
+		const items: MenuItemsList = []
+		for (const i in peCommands) {
+			const cmd = peCommands[i]
+			if (cmd === "-") {
+				items.push({ title: cmd })
+			} else {
 				items.push({
 					icon: commander.haveIcon(cmd),
 					title: commander.getCaption(cmd),
 					info: commander.getTitle(cmd),
 					command: cmd,
-					click: function() {
-						commander.execCommand(this.command);
-					}
-				});
+					click: () => commander.execCommand(this.command)
+				})
 			}
 		}
-		return items;
+		return items
 	}
 
-	function createPopup(peCommands) {
-		return new PopupMenu(makeItems(peCommands));
+	function createPopup(peCommands: string[]) {
+		return new PopupMenu(makeItems(peCommands))
 	}
 
-	function createMainmenu(mmCommands) {
-		var mmMenu = [];
-		for(var mItem in mmCommands) {
+	function createMainmenu(mmCommands: { [name: string]: string[] }) {
+		const mmMenu = []
+		for(const mItem in mmCommands) {
 			mmMenu.push({
 				title: translate.translate("menu." + mItem),
 				items: makeItems(mmCommands[mItem])
-			});
+			})
 		}
-		return new MainMenu(mmMenu);
+		return new MainMenu(mmMenu)
 	}
 
 	function changeUser() {
@@ -76,25 +73,24 @@ namespace Hion {
 	}
 
 	function loadWorkspace() {
-		var workspace = new Workspace({});
-		workspace.appendTo($("workspace"));
+		const workspace = new Workspace({})
+		workspace.appendTo($("workspace"))
 		
-		var loader = new Loader({havestate: true});
+		const loader = new Loader({havestate: true});
 		loader.onload = function() {
-			var tbcommands = ["-", "new", "open", "save", "saveas", "-", "formedit", "bind_rect", "bind_center", "bind_padding", "-", "back", "forward", "-", "delete", "-", "run", "build", "-", "about"];
-			var buttons = [];
-			for(var i in tbcommands) {
-				var cmd = tbcommands[i];
-				if(cmd === "-") {
-					buttons.push({title: "-"});
-				}
-				else {
+			const tbcommands = ["-", "new", "open", "save", "saveas", "-", "formedit", "bind_rect", "bind_center", "bind_padding", "-", "back", "forward", "-", "delete", "-", "run", "build", "-", "about"];
+			const buttons = []
+			for (const i in tbcommands) {
+				const cmd = tbcommands[i]
+				if (cmd === "-") {
+					buttons.push({ title: "-" })
+				} else {
 					buttons.push({
 						icon: commander.haveIcon(cmd),
 						tag: cmd,
 						title: commander.getTitle(cmd),
-						click: function() { commander.execCommand(this.tag); }
-					});
+						click: () => commander.execCommand(this.tag)
+					})
 				}
 			}
 			mainToolBar = new ToolBar(buttons);
@@ -103,57 +99,57 @@ namespace Hion {
 			popupSDK = createPopup(["paste", "selectall", "statistic", "-", "undo", "redo"]);
 			popupLine = createPopup(["paste_debug", "paste_dodata", "paste_hub", "-", "linecolor", "lineinfo"]);
 
-			var mmCommands = {
+			const mmCommands = {
 				file: ["new", "open", "save", "saveas", "-", "share", "addcatalog", "-", "capture", "sha_source"],
 				edit: ["cut", "paste", "copy", "delete", "-", "bringtofront", "sendtoback", "-", "copy_link", "comment", "-", "moveto", "-", "tools"],
 				editor: ["undo", "redo", "-", "slidedown", "slideright", "-", "zoomin", "zoomout", "-", "selectall", "-", "makehint", "remove_lh"],
 				view: ["fullscreen", "-", "formedit", "statistic", "-", "history", "-", "output", "showgraph"],
 				help: ["forum", "help", "-", "opencatalog", "mail", "sendbug", "-", "about"]
-			};
+			}
 			mainMenu = createMainmenu(mmCommands);
 			userMenu = new Hion.MainMenu([{
 				title: user.login,
 				items: makeItems(["login", "profile", "-", "plan", "-", "logout"])
-			}]);
+			}])
 			
-			var propsToolBar = new ToolBar([{
+			const propsToolBar = new ToolBar([{
 				icon: 40,
 				title: "",
-				click: function() { propEditor.visible = true; }
-			}]);
-			
-			$("toolbar").appendChild(mainMenu.getControl());
-			$("toolbar").appendChild(mainToolBar.getControl());
-			$("toolbar").appendChild(new Builder().n("div").class("separator").element);
-			$("toolbar").appendChild(new Builder().n("div").class("user").append(userMenu.getControl()).element);
-			$("toolbar").appendChild(new Builder().n("div").class("hion").attr("title", CONFIG_VERSION).element);
-			$("toolbar").appendChild(propsToolBar.getControl());
+				click: () => { propEditor.visible = true }
+			}])
+
+			const toolBar = $("toolbar")
+			toolBar.appendChild(mainMenu.getControl())
+			toolBar.appendChild(mainToolBar.getControl())
+			toolBar.appendChild(new Builder().n("div").class("separator").element)
+			toolBar.appendChild(new Builder().n("div").class("user").append(userMenu.getControl()).element)
+			toolBar.appendChild(new Builder().n("div").class("hion").attr("title", CONFIG_VERSION).element)
+			toolBar.appendChild(propsToolBar.getControl())
 		
-			commander.reset();
+			commander.reset()
 
-			fileManager.updateUser();
+			fileManager.updateUser()
 
-			docManager.init();
+			docManager.init()
 
-			$("splash").parentNode.removeChild($("splash"));
+			$("splash").remove()
 			
 			if(window.location.hash.startsWith("#/public") || window.location.hash.startsWith("#/examples") || window.location.hash.startsWith("#/pack")) {
-				docManager.open(window.location.hash.substring(1), "");
+				docManager.open(window.location.hash.substring(1), "")
 			}
 		};
-		var packList = [];
+		let packList = []
 		loader.add(new LoaderTask(function(){
-			$.get("/pack/list.txt", function(data, task) {
-				packList = data.trim().split("\n");
-				task.taskComplite("Pack list loaded.");
-			}, this);
-		}));
+			$.get("/pack/list.txt", function(data: string, task: LoaderTask) {
+				packList = data.trim().split("\n")
+				task.taskComplite("Pack list loaded.")
+			}, this)
+		}))
 		loader.add(new LoaderTask(function(){
-			$.get(API_CONFIG_URL, function(data, task) {
+			$.get(API_CONFIG_URL, function(data: string, task: LoaderTask) {
 				try {
 					user = JSON.parse(data);
-				}
-				catch(e) {
+				} catch(e) {
 					console.error("Config load failed")
 					user = {login: "guest", uid: 1};
 				}
@@ -180,22 +176,22 @@ namespace Hion {
 			commander.execCommand("addelement", obj);
 		};
 		workspace.add(palette);
-		var splitter = new Splitter({edge: 3});
+		let splitter = new Splitter({edge: 3})
 		splitter.setManage(palette);
 		splitter.onresize = function(){ setOptionInt("palette_width", palette.width) };
 		
 		docManager = new DocumentManageer({});
 		docManager.ontabselect = docManager.ontabopen = function(tab){
-			if(tab && tab.sdkEditor && tab.sdkEditor.sdk) {
+			if(tab instanceof SHATab && tab.sdkEditor && tab.sdkEditor.sdk) {
 				// set palette elements
-				var pack = tab.sdkEditor.sdk.pack;
+				const pack = tab.sdkEditor.sdk.pack
 				palette.view(pack);
 
 				// set make menu
 				if(pack.make) {
-					var btn = mainToolBar.getButtonByTag("build");
-					var items = [];
-					for(var make of pack.make) {
+					const btn = mainToolBar.getButtonByTag("build");
+					const items = [];
+					for(const make of pack.make) {
 						items.push({
 							title: make.name,
 							command: make.cmd,
@@ -203,12 +199,11 @@ namespace Hion {
 							click: function() {
 								commander.execCommand("make", this.command);
 							}
-						});
+						})
 					}
 					btn.setSubMenu(items);
 				}
-			}
-			else {
+			} else {
 				palette.view(null);
 			}
 		};
@@ -216,7 +211,7 @@ namespace Hion {
 
 		propEditor = new PropertyEditor({width: getOptionInt("prop_width", 173)});
 		workspace.add(propEditor);
-		var splitter = new Splitter({edge: 1, theme: "prop-splitter"});
+		splitter = new Splitter({edge: 1, theme: "prop-splitter"});
 		splitter.setManage(propEditor);
 		splitter.onresize = () => setOptionInt("prop_width", propEditor.width);
 
@@ -254,36 +249,24 @@ namespace Hion {
 			about: {
 				icon: 26,
 				def: true,
-				exec: function() {
-					new Runner("about").run();
-				}
+				exec: () => new Runner("about").run()
 			},
 			login: {
 				icon: 54,
-				exec: function() {
-					new Runner("login", changeUser).run();
-				}
+				exec: () => new Runner("login", changeUser).run()
 			},
 			plan: {
 				def: true,
-				exec: function() {
-					new Runner("plan").run();
-				}
+				exec: () => new Runner("plan").run()
 			},
 			logout: {
-				exec: function() {
-					$.get(API_LOGOUT_URL, function(data) {
-						changeUser();
-					});
-				}
+				exec: () => $.get(API_LOGOUT_URL, changeUser)
 			},
 			profile: {
 				icon: 55, def: true,
-				exec: function() {
-					window.open(CONFIG_PROFILE + user.uid, '_blank');
-				}
+				exec: () => window.open(CONFIG_PROFILE + user.uid, '_blank')
 			},
-			cut: { icon: 42, exec: function(){ this.execCommand("copy").execCommand("delete"); } },
+			cut: { icon: 42, exec: () =>this.execCommand("copy").execCommand("delete") },
 			copy: { icon: 27 },
 			comment: { icon: 33 },
 			paste: { icon: 30 },
@@ -293,11 +276,11 @@ namespace Hion {
 			selectall: { },
 			forum: {
 				def: true,
-				exec: function() { window.open(CONFIG_FORUM, '_blank'); }
+				exec: () =>window.open(CONFIG_FORUM, '_blank')
 			},
 			mail: {
 				def: true, icon: 1,
-				exec: function() { window.location.href =  "mailto:" + CONFIG_EMAIL; }
+				exec: () =>window.location.href =  "mailto:" + CONFIG_EMAIL
 			},
 			bringtofront: { icon: 37 },
 			sendtoback: { icon: 51 },
@@ -317,9 +300,7 @@ namespace Hion {
 			statistic: { icon: 45 },
 			tools: {
 				icon: 4, def: true,
-				exec: function() {
-					new Runner("settings", function(){ /* update options */ }).run();
-				}
+				exec: () => new Runner("settings", () =>{ /* update options */ }).run()
 			},
 			build: { icon: 58 },
 			history: { },
@@ -367,7 +348,7 @@ namespace Hion {
 				this.enabled("logout");
 			}
 			
-			function updatePopup(menu) {
+			function updatePopup(menu: PopupMenu) {
 				menu.each(function(index, item){
 					this.enabled(index, commander.isEnabled(item.command));
 					this.checked(index, commander.isChecked(item.command));
@@ -379,9 +360,9 @@ namespace Hion {
 				item.enabled = commander.isEnabled(item.tag);
 				item.checked = commander.isChecked(item.tag);
 			});
-			var i = 0;
+			let i = 0
 			while(mainMenu.menuItem(i)) {
-				updatePopup(mainMenu.menuItem(i++).menu);
+				updatePopup(mainMenu.menuItem(i++).menu)
 			}
 			i = 0;
 			while(userMenu.menuItem(i)) {
@@ -399,8 +380,8 @@ namespace Hion {
 			event.preventDefault();
 			return false;
 		}
-		return true;
-	});
+		return true
+	})
 
 	window.onload = loadWorkspace;
 }

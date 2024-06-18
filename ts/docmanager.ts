@@ -14,7 +14,7 @@ namespace Hion {
 			this.saved = true;
 		}
 
-		open(file: FSNode, asnew: boolean) { if(!asnew) this.file = file; }
+		open(file: FSNode, asNew: boolean) { if(!asNew) this.file = file; }
 		save(file: FSNode) { this.file = file; }
 		init() {}
 		resize() {}
@@ -27,9 +27,9 @@ namespace Hion {
 		}
 		getTitle(): string {
 			if(this.file) {
-				var fName = this.file.name;
-				var i = fName.indexOf(".");
-				return i > 0 ? fName.substr(0, i) : fName;
+				const fName = this.file.name;
+				const i = fName.indexOf(".");
+				return i > 0 ? fName.substring(0, i) : fName;
 			}
 			
 			return "";
@@ -44,15 +44,15 @@ namespace Hion {
 
 	//------------------------------------------------------------------------------
 
-	var buffer = "";
-	var hintLink = null;
+	let buffer = ""
+	let hintLink = null
 
-	class SHATab extends DocumentTab {
-		private container: Panel;
-		private loader: UILoader;
-		private statusBar: Panel;
-		private address: Panel;
-		private zoom: TrackBar;
+	export class SHATab extends DocumentTab {
+		private readonly container: Panel;
+		private readonly loader: UILoader;
+		private readonly statusBar: Panel;
+		private readonly address: Panel;
+		private readonly zoom: TrackBar;
 		public sdkEditor: SdkEditor;
 		private fEditor: FormEditor;
 
@@ -99,7 +99,7 @@ namespace Hion {
 		}
 
 		private createFromData(data: string) {
-			var sdk = new MSDK(packMan.getPack("webapp"));
+			const sdk = new MSDK(packMan.getPack("webapp"))
 			this.sdkEditor.edit(sdk);
 			//this.sdkEditor.createNew();
 			if(data) {
@@ -111,8 +111,8 @@ namespace Hion {
 			this.resize();
 		}
 
-		open(file: FSNode, asnew: boolean) {
-			super.open(file, asnew);
+		open(file: FSNode, asNew: boolean) {
+			super.open(file, asNew);
 			
 			this.tab.load(true);
 			file.read((error: number, data: string) => {
@@ -157,8 +157,8 @@ namespace Hion {
 						popupSDK.up(x, y);
 						break;
 					case PopupMenuType.POPUP_MENU_HINT_LINK:
-						var items = [];
-						for(var collection of [obj.e.props, obj.e.sys]) {
+						const items = []
+						for(const collection of [obj.e.props, obj.e.sys]) {
 							for(let p in collection) {
 								let prop = collection[p];
 								items.push({
@@ -209,7 +209,7 @@ namespace Hion {
 					this.fEditor.update();
 				}
 			};
-			var __editor__ = this;
+			const __editor__ = this
 			propEditor.onadveditor = function(item) {
 				let e = __editor__.sdkEditor.sdk.selMan.items[0];
 				var prop = e.props[item.name] || e.sys[item.name];
@@ -236,7 +236,7 @@ namespace Hion {
 					var m = new Builder().n("div");
 					let e = m.n("div").style("flexGrow", 1);
 					m.render();
-					var editor = CodeMirror(e.element, {
+					const editor = CodeMirror(e.element, {
 						value: item.value.toString(),
 						lineNumbers: getOptionBool("opt_ce_line_numbers", 1),
 						lineWrapping: getOptionBool("opt_ce_line_wrapping", 0),
@@ -248,9 +248,12 @@ namespace Hion {
 						enterMode: "keep",
 						tabMode: "shift"
 					});
-					
+
 					m.element.dialog({
-						title: "Edit property " + item.name, resize: true, modal: true, destroy: true,
+						title: "Edit property " + item.name,
+						resize: true,
+						modal: true,
+						destroy: true,
 						buttons: [{
 							text: "Save",
 							click: function (dialog) {
@@ -770,17 +773,17 @@ namespace Hion {
 		open(file: FSNode, asnew: boolean) {
 			super.open(file, asnew);
 			
-			var mime = null;
+			let mime = null
 			
-			var mimes = [
+			const mimes = [
 				{ext: /.*\.(js|ts)$/i, mime: "text/javascript"},
 				{ext: /.*\.(hws)$/i, mime: "text/hws"},
 				{ext: /.*\.(css|scss)$/i, mime: "text/css"}
-			];
-			for(var e of mimes) {
+			]
+			for (const e of mimes) {
 				if(file.name.match(e.ext)) {
 					mime = e.mime;
-					break;
+					break
 				}
 			}
 
@@ -795,15 +798,15 @@ namespace Hion {
 			});
 			this.editor.focus();
 			
-			var first = true;
+			let first = true
 			this.editor.on("change", () => {
 				if(first) {
-					first = false;
-					return;
+					first = false
+					return
 				}
-				this.saved = false;
-				commander.reset();
-			});
+				this.saved = false
+				commander.reset()
+			})
 
 			if(file) {
 				this.tab.save(true);
@@ -823,7 +826,7 @@ namespace Hion {
 				commander.enabled("save");
 		}
 
-		execCommand(cmd, data) {
+		execCommand(cmd: string, data) {
 			switch(cmd) {
 				case "save":
 					this.save();
@@ -973,19 +976,20 @@ namespace Hion {
 			
 			var ed = this;
 			
-			function parse(sdk: SDK, level) {
-				for(let e of sdk.imgs) {
-					if(e.sdk) {
-						var node = ed.body.div("node").attr("level", level);
-						for(var i = 0; i < level; i++)
+			function parse(sdk: SDK, level: number) {
+				for (let e of sdk.imgs) {
+					if (e.sdk) {
+						const node = ed.body.div("node").attr("level", level);
+						for (let i = 0; i < level; i++) {
 							node.div("cell");
-						var item = node.div("item").attr("element", e).on("onclick", () => {
+						}
+						const item = node.div("item").attr("element", e).on("onclick", () => {
 							ed.sdkTab.goInto(e);
-						});
-						item.n("img").attr("src", e.img.src);
-						item.n("div").html(e.sys.Comment.value || e.name);
-						for(var l = ed.body.childs()-1; l > 0 && ed.body.child(l).level >= level; l--) {
-							var cls = (ed.body.child(l).childNodes[level-1] as HTMLElement).className;
+						})
+						item.n("img").attr("src", e.img.src)
+						item.n("div").html(e.sys.Comment.value || e.name)
+						for (let l = ed.body.childs()-1; l > 0 && ed.body.child(l)['level'] >= level; l--) {
+							const cls = (ed.body.child(l).childNodes[level-1] as HTMLElement).className;
 							if(cls == "cell")
 								(ed.body.child(l).childNodes[level-1] as HTMLElement).className = l == ed.body.childs()-1 ? "tree-end" : "tree";
 							else if(cls == "tree-end")
@@ -1012,15 +1016,15 @@ namespace Hion {
 
 	//------------------------------------------------------------------------------
 
-	var extMap = [
+	const extMap = [
 		{ ext: /.*\.sha$/i, tab: SHATab },
 		{ ext: /.*\.(txt|js|hws|sql|php|ini|html|css|scss|json)$/i, tab: CodeTab },
 		{ ext: /.*\.ogg$/i, tab: OggTab },
 		{ ext: /.*\.(png|jpg|ico|gif|jpeg|bmp)$/i, tab: ImageTab }
-	];
+	]
 
 	interface ContentTab extends Tab {
-		content: DocumentTab;
+		content: DocumentTab
 	}
 	export class DocumentManageer extends UIContainer {
 
@@ -1031,8 +1035,8 @@ namespace Hion {
 		private splitter: Splitter;
 		private splitter2: Splitter;
 		public state: StatePanel;
-		ontabselect = (tab) => {};
-		ontabopen = (tab) => {};
+		ontabselect: (tab: DocumentTab) => void = () => {}
+		ontabopen: (tab: DocumentTab) => void = () => {}
 		
 		constructor (options) {
 			super(options);
@@ -1128,21 +1132,20 @@ namespace Hion {
 			this.getControl().ondrop = (event) => {
 				event.preventDefault();
 				for(let i = 0; i < event.dataTransfer.files.length; i++) {
-					this.openFile(new DesktopFSNode(event.dataTransfer.files[i]), "");
+					this.openFile(new DesktopFSNode(event.dataTransfer.files[i]), "")
 				}
 				
-				this.getControl().removeAttribute("drop");
-				
+				this.getControl().removeAttribute("drop")
+				return false
+			}
+			this.getControl().ondragover = () =>{
+				this.getControl().setAttribute("drop", "")
 				return false;
-			};
-			this.getControl().ondragover = function(event){
-				this.setAttribute("drop", "");
+			}
+			this.getControl().ondragleave = () =>{
+				this.getControl().removeAttribute("drop")
 				return false;
-			};
-			this.getControl().ondragleave = function(event){
-				this.removeAttribute("drop");
-				return false;
-			};
+			}
 		}
 
 		_ontabopen(tab: DocumentTab) {
@@ -1191,18 +1194,17 @@ namespace Hion {
 		
 		open(fileName: string, title: string) {
 			// tab is already open?
-			var fTab = null;
+			let fTab = null
 			this.tabs.each(function(tab: ContentTab){
 				if(tab.content && tab.content.file && tab.content.file.location() == fileName) {
-					fTab = tab;
+					fTab = tab
 				}
-			});
+			})
 			
 			if(fTab) {
 				this.tabs.select(fTab);
-			}
-			else {
-				this.openFile(getFileNode(fileName), title);
+			} else {
+				this.openFile(getFileNode(fileName), title)
 			}
 		}
 		
@@ -1212,8 +1214,8 @@ namespace Hion {
 		
 		resize() {
 			this.tabs.each(function(tab: ContentTab) {
-				tab.content.resize();
-			});
+				tab.content.resize()
+			})
 		}
 		
 		execCommand(cmd: string, data) {

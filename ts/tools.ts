@@ -21,13 +21,12 @@ namespace Hion {
 					}
 					this.e.onInit.call(args);
 				}
-			}
-			else {
+			} else {
 				$.get((this.project.indexOf("/") >= 0 ? this.project : "gui/" + this.project) + ".sha", (data: string) => {
 					let sdk = new SDK(packMan.getPack("webapp"));
 					sdk.load(data);
 					sdk.run(FLAG_USE_RUN);
-					var e = sdk.getElementById("hcTransmitter") as any;
+					const e = sdk.getElementById("hcTransmitter") as any;
 					if(e) {
 						if(this.callback || overrideCallback) {
 							e.onreturn = this.callback || overrideCallback;
@@ -38,7 +37,7 @@ namespace Hion {
 					}
 					this.sdk = sdk;
 					this.e = e;
-				});
+				})
 			}
 		}
 	}
@@ -105,15 +104,15 @@ namespace Hion {
 		code: number;
 		info?: string;
 	}
-	var infoPanel = new InfoPanel();
+	const infoPanel = new InfoPanel();
 	/**
 	 * Display error top
 	 * @param error - code and info
 	 */
 	export function displayError(error: Error) {
-		var text = "Unknown error, code = " + error.code + (error.info ? ", " + error.info : "");
-		var code = "error." + error.code;
-		var tText = translate.translate(code);
+		const text = "Unknown error, code = " + error.code + (error.info ? ", " + error.info : "");
+		const code = "error." + error.code;
+		const tText = translate.translate(code);
 		
 		infoPanel.error(tText === code ? text : tText + (error.info ? ": " + error.info : ""));
 	}
@@ -123,45 +122,37 @@ namespace Hion {
 	}
 	
 	export function GetPos(offTrial) {
-		var offL=0;
-		var offT=0;
+		let offL= 0;
+		let offT= 0;
 
 		while(offTrial) {
-			offL+=offTrial.offsetLeft - offTrial.scrollLeft;
-			offT+=offTrial.offsetTop - offTrial.scrollTop;
-			offTrial=offTrial.offsetParent;
+			offL += offTrial.offsetLeft - offTrial.scrollLeft;
+			offT += offTrial.offsetTop - offTrial.scrollTop;
+			offTrial = offTrial.offsetParent;
 		}
 
-		return {left:offL , top:offT};
+		return { left: offL , top: offT }
 	} 
 
-	export function toStep(v) { return v < 0 ? Math.ceil(v/7)*7 : Math.floor(v/7)*7; }
+	export function toStep(v: number) { return v < 0 ? Math.ceil(v/7)*7 : Math.floor(v/7)*7; }
 
 	//******************************************************************************
 	// WEB API polyfill
 	//******************************************************************************
 	export function fullScreen(element: HTMLElement) {
 		if(element.requestFullscreen) {
-			element.requestFullscreen();
-		} else if(element.webkitRequestFullscreen) {
-			element.webkitRequestFullscreen();
-		} else if(element["mozRequestFullScreen"]) {
-			element["mozRequestFullScreen"]();
+			element.requestFullscreen()
 		}
 	}
 
 	export function fullScreenCancel() {
 		if(document.exitFullscreen) {
-			document.exitFullscreen();
-		} else if(document.webkitExitFullscreen ) {
-			document.webkitExitFullscreen();
-		} else if(document["mozCancelFullScreen"]) {
-			document["mozCancelFullScreen"]();
+			document.exitFullscreen()
 		}
 	}
 
 	export function isInFullscreen() {
-		return document.fullscreenElement || document.webkitFullscreenElement || document["mozFullScreenElement"];
+		return !!document.fullscreenElement
 	}
 
 	if(!String.prototype.startsWith) {

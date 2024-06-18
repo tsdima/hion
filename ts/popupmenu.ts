@@ -1,11 +1,12 @@
 namespace Hion {
 
 	interface MenuItem {
-		title: string;
-		info?: string;
-		icon: number;
-		checked: boolean;
-		click();
+		command?: string
+		title?: string
+		info?: string
+		icon?: number
+		checked?: boolean
+		click?: () => void
 	}
 	export declare type MenuItemsList = Array<MenuItem>;
 	
@@ -126,7 +127,7 @@ namespace Hion {
 			return (this.body.child(index) as MenuItemElement).item;
 		}
 
-		each(callback:(this, index: number, item: HTMLElement) => void) {
+		each(callback:(this, index: number, item: MenuItem) => void) {
 			for(let i = 0; i < this.body.childs(); i++) {
 				let item = (this.body.child(i) as MenuItemElement).item;
 				if(item) {
