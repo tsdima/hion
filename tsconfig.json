@@ -2,11 +2,18 @@
 	"compileOnSave": true,
 	"compilerOptions": {
 		"removeComments": true,
-		"target": "ES6",
-		"module": "esnext",
-		"sourceMap": true
+		"target": "ES2015",
+		"module": "NodeNext",
+    "moduleResolution": "NodeNext",
+		"sourceMap": true,
+    "plugins": [{
+      "name": "typescript-plugin-css-modules"
+    }]
 	},
+  "exclude": ["node_modules"],
 	"include": [
-		"ts/*.ts"
-	]
+    "ts/*.ts",
+    "ts/js/*.js",
+    "ts/spec/*.d.ts"
+  ]
 }

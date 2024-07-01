@@ -7,19 +7,19 @@ function webapp() {
 		switch (i.name) {
 			case "Button":
 				i.run = function (flags) {
-					this.ctl = new Button({
+					this.ctl = new UI.Button({
 						caption: this.props.Caption.getTranslateValue(),
 						url: this.props.URL.value
 					});
 					if(!this.props.Align.isDef()) {
-						this.ctl.layout = new HLayout(this.ctl, {reverse: this.props.Align.value === 2, alignItems: 2, justifyContent: 2});
+						this.ctl.layout = new UI.HLayout(this.ctl, {reverse: this.props.Align.value === 2, alignItems: 2, justifyContent: 2});
 					}
 					return WinElement.prototype.run.call(this, flags);
 				};
 				break;
 			case "CheckBox":
 				i.run = function (flags) {
-					this.ctl = new CheckBox({
+					this.ctl = new UI.CheckBox({
 						caption: this.props.Caption.getTranslateValue(),
 						checked: this.props.Checked.value
 					});
@@ -28,7 +28,7 @@ function webapp() {
 				break;
 			case "RadioButton":
 				i.run = function (flags) {
-					this.ctl = new RadioButton({
+					this.ctl = new UI.RadioButton({
 						name: this.props.Name.value,
 						caption: this.props.Caption.getTranslateValue(),
 						checked: this.props.Checked.value
@@ -38,7 +38,7 @@ function webapp() {
 				break;
 			case "Edit":
 				i.run = function (flags) {
-					this.ctl = new Edit({
+					this.ctl = new UI.Edit({
 						text: this.props.Text.value,
 						placeHolder: this.props.PlaceHolder.getTranslateValue(),
 						password: this.props.Password.value,
@@ -49,7 +49,7 @@ function webapp() {
 				break;
 			case "NumberEdit":
 				i.run = function (flags) {
-					this.ctl = new NumberEdit({
+					this.ctl = new UI.NumberEdit({
 						number: this.props.Number.value,
 						min: this.props.Min.value,
 						max: this.props.Max.value,
@@ -61,7 +61,7 @@ function webapp() {
 				break;
 			case "Memo":
 				i.run = function (flags) {
-					this.ctl = new Memo({text: this.props.Text.value});
+					this.ctl = new UI.Memo({text: this.props.Text.value});
 					return WinElement.prototype.run.call(this, flags);
 				};
 				break;
@@ -71,7 +71,7 @@ function webapp() {
 					this.onClick.args = this.props.Select.getText();
 				};
 				i.run = function (flags) {
-					this.ctl = new ListBox();
+					this.ctl = new UI.ListBox();
 
 					var text = this.props.Strings.value;
 					try {
@@ -92,7 +92,7 @@ function webapp() {
 					this.onSelect.args = this.props.Select.getText();
 				};
 				i.run = function (flags) {
-					this.ctl = new ComboBox();
+					this.ctl = new UI.ComboBox();
 
 					this.ctl.setText(this.props.Strings.value);
 
@@ -101,7 +101,7 @@ function webapp() {
 				break;
 			case "Label":
 				i.run = function (flags) {
-					this.ctl = new Label({
+					this.ctl = new UI.Label({
 						caption: this.props.Caption.getTranslateValue(),
 						halign: this.props.HAlign.value,
 						valign: this.props.VAlign.value,
@@ -113,14 +113,14 @@ function webapp() {
 				break;
 			case "PaintBox":
 				i.run = function (flags) {
-					this.ctl = new Canvas({theme: flags & Hion.FLAG_USE_EDIT ? "borderin" : ""});
+					this.ctl = new UI.Canvas({theme: flags & 0x02/*Hion.FLAG_USE_EDIT*/ ? "borderin" : ""});
 
 					return WinElement.prototype.run.call(this, flags);
 				};
 				break;
 			case "ProgressBar":
 				i.run = function (flags) {
-					this.ctl = new ProgressBar({
+					this.ctl = new UI.ProgressBar({
 						max: this.props.Max.value,
 						position: this.props.Position.value,
 						custom: this.props.Engine.isDef()
@@ -131,7 +131,7 @@ function webapp() {
 				break;
 			case "TrackBar":
 				i.run = function (flags) {
-					this.ctl = new TrackBar({
+					this.ctl = new UI.TrackBar({
 						min: this.props.Min.value,
 						max: this.props.Max.value,
 						step: this.props.Step.value,
@@ -143,7 +143,7 @@ function webapp() {
 				break;
 			case "Panel":
 				i.run = function (flags) {
-					this.ctl = new Panel({});
+					this.ctl = new UI.Panel({});
 					this.ctl.layout = this.getLayout(this.ctl);
 
 					return WinElement.prototype.run.call(this, flags);
@@ -158,7 +158,7 @@ function webapp() {
 				break;
 			case "ScrollBox":
 				i.run = function (flags) {
-					this.ctl = new Panel({theme: "ui-scrollbox"});
+					this.ctl = new UI.Panel({theme: "ui-scrollbox"});
 					this.ctl.layout = this.getLayout(this.ctl);
 
 					return WinElement.prototype.run.call(this, flags);
@@ -173,7 +173,7 @@ function webapp() {
 				break;
 			case "Spoiler":
 				i.run = function (flags) {
-					this.ctl = new Spoiler({caption: "Spoil me"});
+					this.ctl = new UI.Spoiler({caption: "Spoil me"});
 					this.ctl.layout = this.getLayout(this.ctl);
 
 					return WinElement.prototype.run.call(this, flags);
@@ -188,7 +188,7 @@ function webapp() {
 				break;
 			case "Image":
 				i.run = function (flags) {
-					this.ctl = new UIImage({
+					this.ctl = new UI.UIImage({
 						url: this.props.URL.value,
 						mode: this.props.Mode.value
 					});
@@ -198,7 +198,7 @@ function webapp() {
 				break;
 			case "Figure":
 				i.run = function (flags) {
-					this.ctl = new SVG({
+					this.ctl = new UI.SVG({
 						shape: this.props.Shape.value,
 						fill: this.props.Fill.value,
 						stroke: this.props.Stroke.value,
@@ -210,7 +210,7 @@ function webapp() {
 				break;
 			case "Loader":
 				i.run = function (flags) {
-					this.ctl = new UILoader({
+					this.ctl = new UI.UILoader({
 						size: this.props.Size.value,
 						radius: this.props.Radius.value
 					});
@@ -220,7 +220,7 @@ function webapp() {
 				break;
 			case "Switcher":
 				i.run = function (flags) {
-					this.ctl = new UISwitcher({
+					this.ctl = new UI.UISwitcher({
 						on: this.props.On.value
 					});
 
@@ -229,11 +229,11 @@ function webapp() {
 				break;
 			case "ToolBar":
 				i.run = function (flags) {
-					var array = [];
-					if(!this.props.Buttons.isDef()) {
+					let array = []
+					if (!this.props.Buttons.isDef()) {
 						array = JSON.parse(this.props.Buttons.value);
-						var index = 0;
-						for(var a of array) {
+						let index = 0;
+						for (const a of array) {
 							if(a.title !== "-") {
 								if(!a.tag) {
 									a.tag = index;
@@ -245,16 +245,16 @@ function webapp() {
 							}
 						}
 					}
-					this.ctl = new ToolBar(array, {url: this.props.URL.value});
+					this.ctl = new UI.ToolBar(array, {url: this.props.URL.value});
 
 					return WinElement.prototype.run.call(this, flags);
 				};
 				break;
 			case "SimpleTable":
 				i.run = function (flags) {
-					var columns = this.props.Columns.isDef() ? null : JSON.parse(this.props.Columns.value);
+					const columns = this.props.Columns.isDef() ? null : JSON.parse(this.props.Columns.value);
 					if(columns && translate) {
-						for(var col of columns) {
+						for(const col of columns) {
 							col.title = translate.translate(col.title);
 						}
 					}
@@ -270,7 +270,7 @@ function webapp() {
 				break;
 			case "DropBox":
 				i.run = function (flags) {
-					this.ctl = new DropBox({
+					this.ctl = new UI.DropBox({
 
 					});
 
@@ -279,7 +279,7 @@ function webapp() {
 				break;
 			case "MainForm":
 				i.run = function(flags) {
-					this.ctl = new Dialog({
+					this.ctl = new UI.Dialog({
 						title: this.props.Caption.getTranslateValue(),
 						icon: this.props.URL.value,
 						destroy: !(flags & Hion.FLAG_USE_CHILD || flags & Hion.FLAG_USE_EDIT),
@@ -321,7 +321,7 @@ function webapp() {
 				break;
 			case "SiteWidget":
 				i.run = function(flags) {
-					this.ctl = new Panel({theme: ""});
+					this.ctl = new UI.Panel({theme: ""});
 
 					this.ctl.layout = this.getLayout(this.ctl);
 
@@ -359,21 +359,21 @@ function webapp() {
 				break;
 			case "YaMap":
 				i.run = function (flags) {
-					this.ctl = new YaMap();
+					this.ctl = new UI.YaMap();
 
 					return WinElement.prototype.run.call(this, flags);
 				};
 				break;
 			case "YouTube":
 				i.run = function(flags) {
-					this.ctl = new YouTube({url: this.props.URL.value});
+					this.ctl = new UI.YouTube({url: this.props.URL.value});
 
 					return WinElement.prototype.run.call(this, flags);
 				};
 				break;
 			case "ChartPie":
 				i.run = function(flags) {
-					this.ctl = new GoogleChart({
+					this.ctl = new UI.GoogleChart({
 						theme: flags & Hion.FLAG_USE_EDIT ? "invisible-control" : "",
 						chart: "PieChart",
 						title: this.props.Title.value,
@@ -391,7 +391,7 @@ function webapp() {
 				break;
 			case "ChartGauge":
 				i.run = function(flags) {
-					this.ctl = new GoogleChart({
+					this.ctl = new UI.GoogleChart({
 						chart: "Gauge"
 					});
 
@@ -400,7 +400,7 @@ function webapp() {
 				break;
 			case "ChartLine":
 				i.run = function(flags) {
-					this.ctl = new GoogleChart({
+					this.ctl = new UI.GoogleChart({
 						chart: "LineChart"
 					});
 
@@ -409,21 +409,21 @@ function webapp() {
 				break;
 			case "VideoPlayer":
 				i.run = function(flags) {
-					this.ctl = new VideoPlayer({url: this.props.URL.value, controls: this.props.Controls.value, autoplay: this.props.Autoplay.value});
+					this.ctl = new UI.VideoPlayer({url: this.props.URL.value, controls: this.props.Controls.value, autoplay: this.props.Autoplay.value});
 
 					return WinElement.prototype.run.call(this, flags);
 				};
 				break;
 			case "AudioPlayer":
 				i.run = function(flags) {
-					this.ctl = new AudioPlayer({url: this.props.URL.value, controls: this.props.Controls.value, autoplay: this.props.Autoplay.value});
+					this.ctl = new UI.AudioPlayer({url: this.props.URL.value, controls: this.props.Controls.value, autoplay: this.props.Autoplay.value});
 
 					return WinElement.prototype.run.call(this, flags);
 				};
 				break;
 			case "RangeSlider":
 				i.run = function (flags) {
-					this.ctl = new RangeSlider({
+					this.ctl = new UI.RangeSlider({
 						min: this.props.Min.value,
 						max: this.props.Max.value,
 						step: this.props.Step.value,
@@ -441,14 +441,13 @@ function webapp() {
 						this.css.innerHTML = this.props.StyleSheet.value;
 						document.head.appendChild(this.css);
 						this.cssref = 1;
-					}
-					else {
+					} else {
 						this.cssref++;
 					}
 				};
 				i.onfree = function() {
 					this.cssref--;
-					if(this.css && this.cssref == 0) {
+					if(this.css && this.cssref === 0) {
 						document.head.removeChild(this.css);
 						this.css = null;
 					}

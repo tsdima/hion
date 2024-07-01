@@ -12,11 +12,11 @@ function readProperty(data, point, prop) {
 		return prop;
 	else if(data)
 		return data;
-	return ""; 
+	return "";
 }
- 
+
 function readInt(data, point, prop) {
-	var p = parseInt(prop);
+	const p = parseInt(prop);
 	if(point && point.point)
 		return parseInt(point.point.onevent(data));
 	else if(prop)
@@ -31,24 +31,24 @@ function toRGB(color) {
 		return {r: color & 0xff, g: (color >> 8) & 0xff, b: (color >> 16) & 0xff, a: 1.0};
 	}
 	else if(color.startsWith("#")) {
-		var value = parseInt(color.substring(1), 16);
+		const value = parseInt(color.substring(1), 16);
 		return {b: value & 0xff, g: (value >> 8) & 0xff, r: (value >> 16) & 0xff, a: 1.0};
 	}
 	else if(color.startsWith("rgba")) {
-		var arr = color.substring(5, color.length - 1).split(",");
+		const arr = color.substring(5, color.length - 1).split(",");
 		return {r: parseInt(arr[0]), g: parseInt(arr[1]), b: parseInt(arr[2]), a: parseInt(arr[3])};
 	}
 	else if(color.startsWith("rgb")) {
-		var arr = color.substring(4, color.length - 1).split(",");
+		const arr = color.substring(4, color.length - 1).split(",");
 		return {r: parseInt(arr[0]), g: parseInt(arr[1]), b: parseInt(arr[2]), a: 1.0};
 	}
-	
+
 	return {r: 0, g: 0, b: 0, a: 1.0};
 }
 
 function componentToHex(c) {
-	var hex = c.toString(16);
-	return hex.length == 1 ? "0" + hex : hex;
+	const hex = c.toString(16);
+	return hex.length === 1 ? "0" + hex : hex;
 }
 
 function modules() {
@@ -56,12 +56,12 @@ function modules() {
 		switch (i.name) {
 			case "Button":
 				i.run = function (flags) {
-					this.ctl = new Button({
+					this.ctl = new UI.Button({
 						caption: this.props.Caption.getTranslateValue(),
 						url: this.props.URL.value
 					});
 					if(!this.props.Align.isDef()) {
-						this.ctl.layout = new HLayout(this.ctl, {reverse: this.props.Align.value === 2, alignItems: 2, justifyContent: 2});
+						this.ctl.layout = new UI.HLayout(this.ctl, {reverse: this.props.Align.value === 2, alignItems: 2, justifyContent: 2});
 					}
 					this.ctl.addListener("click", function () {
 						i.onClick.call(i.props.Data.value);
@@ -69,7 +69,7 @@ function modules() {
 					return WinElement.prototype.run.call(this, flags);
 				};
 				i.addPoint = function(name, type) {
-					var point = WinElement.prototype.addPoint.call(this, name, type);
+					const point = WinElement.prototype.addPoint.call(this, name, type);
 					if(name === "doCaption") {
 						point.onevent = function(data) {
 							this.parent.ctl.caption = data;
@@ -86,7 +86,7 @@ function modules() {
 					return this.parent.ctl.checked ? 1 : 0;
 				};
 				i.run = function (flags) {
-					this.ctl = new CheckBox({
+					this.ctl = new UI.CheckBox({
 						caption: this.props.Caption.getTranslateValue(),
 						checked: this.props.Checked.value
 					});
@@ -105,7 +105,7 @@ function modules() {
 					return this.parent.ctl.checked ? 1 : 0;
 				};
 				i.run = function (flags) {
-					this.ctl = new RadioButton({
+					this.ctl = new UI.RadioButton({
 						name: this.props.Name.value,
 						caption: this.props.Caption.getTranslateValue(),
 						checked: this.props.Checked.value
@@ -125,7 +125,7 @@ function modules() {
 					return this.parent.ctl.text;
 				};
 				i.run = function (flags) {
-					this.ctl = new Edit({
+					this.ctl = new UI.Edit({
 						text: this.props.Text.value,
 						placeHolder: this.props.PlaceHolder.getTranslateValue(),
 						password: this.props.Password.value,
@@ -146,7 +146,7 @@ function modules() {
 					return this.parent.ctl.number;
 				};
 				i.run = function (flags) {
-					this.ctl = new NumberEdit({
+					this.ctl = new UI.NumberEdit({
 						number: this.props.Number.value,
 						min: this.props.Min.value,
 						max: this.props.Max.value,
@@ -168,7 +168,7 @@ function modules() {
 					return this.parent.ctl.date;
 				};
 				i.run = function (flags) {
-					this.ctl = new UIDatePicker({
+					this.ctl = new UI.UIDatePicker({
 						min: this.props.Min.value,
 						max: this.props.Max.value
 					});
@@ -187,7 +187,7 @@ function modules() {
 					return this.parent.ctl.color;
 				};
 				i.run = function (flags) {
-					this.ctl = new UIColorButton({});
+					this.ctl = new UI.UIColorButton({});
 					this.ctl.addListener("input", function () {
 						i.onSelect.call(i.ctl.color);
 					});
@@ -206,7 +206,7 @@ function modules() {
 					return this.parent.ctl.text;
 				};
 				i.run = function (flags) {
-					this.ctl = new Memo({text: this.props.Text.value});
+					this.ctl = new UI.Memo({text: this.props.Text.value});
 
 					if(i.Position) {
 						i.Position.onevent = function (data) {
@@ -223,10 +223,10 @@ function modules() {
 					this.onClick.args = this.props.Select.getText();
 				};
 				i.doAdd.onevent = function (data) {
-					var d = this.parent.d(data);
+					const d = this.parent.d(data);
 					if(this.parent.Icon) {
-						var text = d.read("Str");
-						var icon = d.read("Icon");
+						const text = d.read("Str");
+						const icon = d.read("Icon");
 						this.parent.ctl.addIcon(icon, text);
 					}
 					else
@@ -242,13 +242,13 @@ function modules() {
 					return this.parent.ctl.getSelectString();
 				};
 				i.run = function (flags) {
-					this.ctl = new ListBox();
+					this.ctl = new UI.ListBox();
 					this.ctl.e = this;
 
-					var text = this.props.Strings.value;
+					const text = this.props.Strings.value;
 					try {
-						var a = JSON.parse(text);
-						for(var item of a) {
+						const a = JSON.parse(text);
+						for(const item of a) {
 							this.ctl.addIcon(item[1], item[0]);
 						}
 					}
@@ -308,7 +308,7 @@ function modules() {
 					return this.parent.ctl.getSelectString();
 				};
 				i.run = function (flags) {
-					this.ctl = new ComboBox();
+					this.ctl = new UI.ComboBox();
 					this.ctl.e = this;
 
 					this.ctl.setText(this.props.Strings.value);
@@ -342,7 +342,7 @@ function modules() {
 					this.parent.ctl.caption = data;
 				};
 				i.run = function (flags) {
-					this.ctl = new Label({
+					this.ctl = new UI.Label({
 						caption: this.props.Caption.getTranslateValue(),
 						halign: this.props.HAlign.value,
 						valign: this.props.VAlign.value,
@@ -361,24 +361,24 @@ function modules() {
 					return this.parent.ctl.canvas;
 				};
 				i.run = function (flags) {
-					this.ctl = new Canvas({theme: flags & Hion.FLAG_USE_EDIT ? "borderin" : ""});
+					this.ctl = new UI.Canvas({theme: flags & Hion.FLAG_USE_EDIT ? "borderin" : ""});
 
 					return WinElement.prototype.run.call(this, flags);
 				};
 				break;
 			case "PointXY":
 				i.Point.onevent = function() {
-					var d = this.parent.d(0);
+					const d = this.parent.d(0);
 					return {x: d.readInt("X"), y: d.readInt("Y")};
 				};
 				break;
 			case "Line":
 				i.doDraw.onevent = function(data) {
-					var d = this.parent.d(data);
-					var canvas = d.read("Canvas");
-					var point1 = d.read("Point1");
-					var point2 = d.read("Point2");
-					var props = this.parent.props;
+					const d = this.parent.d(data);
+					const canvas = d.read("Canvas");
+					const point1 = d.read("Point1");
+					const point2 = d.read("Point2");
+					const props = this.parent.props;
 					canvas.beginPath();
 					canvas.moveTo(point1.x || props.X1.value, point1.y || props.Y1.value);
 					canvas.lineTo(point2.x || props.X2.value, point2.y || props.Y2.value);
@@ -388,15 +388,15 @@ function modules() {
 				break;
 			case "Rectangle":
 				i.doDraw.onevent = function(data) {
-					var d = this.parent.d(data);
-					var canvas = d.read("Canvas");
-					var point1 = d.read("Point1");
-					var point2 = d.read("Point2");
-					var props = this.parent.props;
-					var x1 = point1.x || props.X1.value;
-					var y1 = point1.y || props.Y1.value;
-					var x2 = point2.x || props.X2.value;
-					var y2 = point2.y || props.Y2.value;
+					const d = this.parent.d(data);
+					const canvas = d.read("Canvas");
+					const point1 = d.read("Point1");
+					const point2 = d.read("Point2");
+					const props = this.parent.props;
+					const x1 = point1.x || props.X1.value;
+					const y1 = point1.y || props.Y1.value;
+					const x2 = point2.x || props.X2.value;
+					const y2 = point2.y || props.Y2.value;
 					if(this.parent.props.Type.value !== 1) {
 						canvas.fillRect(x1, y1, x2, y2);
 					}
@@ -408,17 +408,17 @@ function modules() {
 				break;
 			case "RoundRectangle":
 				i.doDraw.onevent = function(data) {
-					var d = this.parent.d(data);
-					var canvas = d.read("Canvas");
-					var point1 = d.read("Point1");
-					var point2 = d.read("Point2");
-					var radius = d.readFloat("Radius");
-					var props = this.parent.props;
-					var x1 = point1.x || props.X1.value;
-					var y1 = point1.y || props.Y1.value;
-					var x2 = point2.x || props.X2.value;
-					var y2 = point2.y || props.Y2.value;
-					
+					const d = this.parent.d(data);
+					const canvas = d.read("Canvas");
+					const point1 = d.read("Point1");
+					const point2 = d.read("Point2");
+					let radius = d.readFloat("Radius");
+					const props = this.parent.props;
+					const x1 = point1.x || props.X1.value;
+					const y1 = point1.y || props.Y1.value;
+					const x2 = point2.x || props.X2.value;
+					const y2 = point2.y || props.Y2.value;
+
 					if(radius > (x2 - x1)/2) radius = (x2 - x1)/2;
 					if(radius > (y2 - y1)/2) radius = (y2 - y1)/2;
 					canvas.beginPath();
@@ -432,7 +432,7 @@ function modules() {
 					canvas.lineTo(x1, y1 + radius);
 					canvas.quadraticCurveTo(x1, y1, x1 + radius, y1);
 					canvas.closePath();
-					
+
 					if(this.parent.props.Type.value !== 1) {
 						canvas.fill();
 					}
@@ -450,7 +450,7 @@ function modules() {
 					var props = this.parent.props;
 					var x = point.x || props.X.value;
 					var y = point.y || props.Y.value;
-					
+
 					if(!this.idata) {
 						this.idata = canvas.createImageData(1,1);
 					}
@@ -460,7 +460,7 @@ function modules() {
 					d[1] = color.g;
 					d[2] = color.b;
 					d[3] = color.a*255;
-					canvas.putImageData(this.idata, x, y);    
+					canvas.putImageData(this.idata, x, y);
 					this.parent.onDraw.call(canvas);
 				};
 				break;
@@ -478,7 +478,7 @@ function modules() {
 					var d = data.data;
 					var list = [];
 					list.push({x: x, y: y});
-					
+
 					var color = toRGB(canvas.fillStyle);
 					var r = color.r;
 					var g = color.g;
@@ -488,7 +488,7 @@ function modules() {
 					var gf = d[fIndex+1];
 					var bf = d[fIndex+2];
 					var af = d[fIndex+3];
-					
+
 					function isOriginPixel(index) {
 						if(smooth) {
 							if(d[index + 0] === r && d[index + 1] === g && d[index + 2] === b)
@@ -498,7 +498,7 @@ function modules() {
 						}
 						return d[index + 0] == rf && d[index + 1] == gf && d[index + 2] == bf && d[index + 3] == af;
 					}
-					
+
 					if(Math.abs(r - rf) == 0 && Math.abs(g - gf) == 0 && Math.abs(b - bf) == 0) {
 						// do nothing
 					}
@@ -555,7 +555,7 @@ function modules() {
 					var props = this.parent.props;
 					var x = point.x || props.X.value;
 					var y = point.y || props.Y.value;
-					
+
 					var data = canvas.getImageData(x, y, 1, 1);
 					var d = data.data;
 					this.parent.onGetPixel.call("rgba(" + d[0] + "," + d[1] + "," + d[2] + "," + (d[3]/255) + ")");
@@ -846,7 +846,7 @@ function modules() {
 					var x = point.x || props.X.value;
 					var y = point.y || props.Y.value;
 					canvas.moveTo(x, y);
-					
+
 					this.parent.onMoveTo.call(canvas);
 				};
 				break;
@@ -859,7 +859,7 @@ function modules() {
 					var x = point.x || props.X.value;
 					var y = point.y || props.Y.value;
 					canvas.lineTo(x, y);
-					
+
 					this.parent.onLineTo.call(canvas);
 				};
 				break;
@@ -870,7 +870,7 @@ function modules() {
 					var x = d.readFloat("X");
 					var y = d.readFloat("Y");
 					canvas.translate(x, y);
-					
+
 					this.parent.onTranslate.call(canvas);
 				};
 				break;
@@ -880,7 +880,7 @@ function modules() {
 					var canvas = d.read("Canvas");
 					var a = d.readFloat("Angle");
 					canvas.rotate(a);
-					
+
 					this.parent.onRotate.call(canvas);
 				};
 				break;
@@ -891,7 +891,7 @@ function modules() {
 					var x = d.readFloat("X");
 					var y = d.readFloat("Y");
 					canvas.scale(x, y);
-					
+
 					this.parent.onScale.call(canvas);
 				};
 				break;
@@ -903,15 +903,15 @@ function modules() {
 						canvas.save();
 					else if(this.parent.props.Mode.value == 1)
 						canvas.restore();
-					
+
 					this.parent.onState.call(canvas);
-					
+
 					if(this.parent.props.Mode.value == 2)
 						canvas.restore();
 				};
 				break;
 			case "RGB":
-				i.doRGB.onevent=  function(data) {
+				i.doRGB.onevent = function(data) {
 					var d = this.parent.d(data);
 					var r = d.readInt("R");
 					var g = d.readInt("G");
@@ -938,7 +938,7 @@ function modules() {
 				};
 				break;
 			case "ToRGB":
-				i.doGetRGB.onevent=  function(data) {
+				i.doGetRGB.onevent = function(data) {
 					var d = this.parent.d(data);
 					var color = d.read("Color");
 					this.parent.result = toRGB(color);
@@ -983,7 +983,7 @@ function modules() {
 				};
 
 				i.run = function (flags) {
-					this.ctl = new ProgressBar({
+					this.ctl = new UI.ProgressBar({
 						max: this.props.Max.value,
 						position: this.props.Position.value,
 						custom: this.props.Engine.isDef()
@@ -1000,7 +1000,7 @@ function modules() {
 					return this.parent.ctl.position;
 				};
 				i.run = function (flags) {
-					this.ctl = new TrackBar({
+					this.ctl = new UI.TrackBar({
 						min: this.props.Min.value,
 						max: this.props.Max.value,
 						step: this.props.Step.value,
@@ -1016,7 +1016,7 @@ function modules() {
 				break;
 			case "RangeSlider":
 				i.run = function (flags) {
-					this.ctl = new RangeSlider({
+					this.ctl = new UI.RangeSlider({
 						min: this.props.Min.value,
 						max: this.props.Max.value,
 						step: this.props.Step.value,
@@ -1043,7 +1043,7 @@ function modules() {
 				break;
 			case "Spoiler":
 				i.run = function (flags) {
-					this.ctl = new Spoiler({
+					this.ctl = new UI.Spoiler({
 						caption: "test"
 					});
 					this.ctl.layout = this.getLayout(this.ctl);
@@ -1060,7 +1060,7 @@ function modules() {
 				break;
 			case "Panel":
 				i.run = function (flags) {
-					this.ctl = new Panel({});
+					this.ctl = new UI.Panel({});
 					this.ctl.layout = this.getLayout(this.ctl);
 
 					return WinElement.prototype.run.call(this, flags);
@@ -1095,8 +1095,7 @@ function modules() {
 						this.css.innerHTML = this.props.StyleSheet.value;
 						document.head.appendChild(this.css);
 						this.cssref = 1;
-					}
-					else {
+					} else {
 						this.cssref++;
 					}
 				};
@@ -1110,7 +1109,7 @@ function modules() {
 				break;
 			case "Spoiler":
 				i.run = function (flags) {
-					this.ctl = new Spoiler({caption: "Spoil me"});
+					this.ctl = new UI.Spoiler({caption: "Spoil me"});
 					this.ctl.layout = this.getLayout(this.ctl);
 
 					return WinElement.prototype.run.call(this, flags);
@@ -1128,7 +1127,7 @@ function modules() {
 					Hion.Hub.prototype.onpropchange.call(this, prop);
 					if(prop.name === "InCount") {
 						for(var i in this.points) {
-							if(this.points[i].type === Hion.pt_work) {
+							if(this.points[i].type === Hion.PT_WORK) {
 								this.points[i].onevent = function(data) {
 									for (var i = 0; i < this.parent.props.OutCount.value; i++) {
 										this.parent.points["onEvent" + (i+1)].call(data);
@@ -1141,12 +1140,12 @@ function modules() {
 				i.onpropchange(i.props.InCount);
 				break;
 			case "HubEx":
-				for(var p = 0; p < 3; p++) {
+				for(let p = 0; p < 3; p++) {
 					i[i.pIndex[p]].onevent = function(data) { this.parent.onEvent.call(data); };
 				}
 				break;
 			case "GetDataEx":
-				for(var p = 0; p < 3; p++) {
+				for(let p = 0; p < 3; p++) {
 					i[i.pIndex[p]].onevent = function(data) { return readProperty(data, this.parent.Data); };
 				}
 				i.onpropchange(i.props.Angle);
@@ -1163,7 +1162,7 @@ function modules() {
 				break;
 			case "IndexToChannel":
 				i.doEvent.onevent = function(data) {
-					var name = "onEvent" + (this.parent.d(data).readInt("Index") + 1);
+					const name = "onEvent" + (this.parent.d(data).readInt("Index") + 1);
 					if(this.parent[name]) {
 						this.parent[name].call(this.parent.props.Data.value);
 					}
@@ -1240,7 +1239,7 @@ function modules() {
 					var d = this.parent.d(data);
 					for(var i in this.parent.points) {
 						var point = this.parent.points[i];
-						if(point.type === Hion.pt_data) {
+						if(point.type === Hion.PT_DATA) {
 							array.push(d.read(point.name));
 						}
 					}
@@ -1342,14 +1341,14 @@ function modules() {
 					this.parent.object = object;
 					for(var p in this.parent.points) {
 						var point = this.parent.points[p];
-						if(point.type == Hion.pt_event) {
+						if(point.type == Hion.PT_EVENT) {
 							point.call(object[point.name.substring(2)]);
 						}
 					}
 				};
 				i.addPoint = function(name, type) {
 					var point = DPLElement.prototype.addPoint.call(this, name, type);
-					if(point.type == Hion.pt_var) {
+					if(point.type == Hion.PT_VAR) {
 						point.onevent = function() {
 							return this.parent.object[this.name];
 						};
@@ -1463,7 +1462,7 @@ function modules() {
 					return this.parent.ctl.getControl();
 				};
 				i.run = function (flags) {
-					this.ctl = new UIImage({
+					this.ctl = new UI.UIImage({
 						url: this.props.URL.value,
 						mode: this.props.Mode.value
 					});
@@ -1477,7 +1476,7 @@ function modules() {
 				break;
 			case "Figure":
 				i.run = function (flags) {
-					this.ctl = new SVG({
+					this.ctl = new UI.SVG({
 						shape: this.props.Shape.value,
 						fill: this.props.Fill.value,
 						stroke: this.props.Stroke.value,
@@ -1494,7 +1493,7 @@ function modules() {
 				break;
 			case "Loader":
 				i.run = function (flags) {
-					this.ctl = new UILoader({
+					this.ctl = new UI.UILoader({
 						size: this.props.Size.value,
 						radius: this.props.Radius.value
 					});
@@ -1507,7 +1506,7 @@ function modules() {
 					return this.parent.ctl.on ? 1: 0;
 				};
 				i.run = function (flags) {
-					this.ctl = new UISwitcher({
+					this.ctl = new UI.UISwitcher({
 						on: this.props.On.value
 					});
 
@@ -1542,7 +1541,7 @@ function modules() {
 							}
 						}
 					}
-					this.ctl = new ToolBar(array, {url: this.props.URL.value});
+					this.ctl = new UI.ToolBar(array, {url: this.props.URL.value});
 
 					return WinElement.prototype.run.call(this, flags);
 				};
@@ -1559,7 +1558,7 @@ function modules() {
 							col.title = Hion.translate.translate(col.title);
 						}
 					}
-					this.ctl = new UISimpleTable({
+					this.ctl = new UI.UISimpleTable({
 						columns: columns,
 						headers: this.props.Headers.isDef(),
 						lineheight: this.props.LineHeight.isDef() ? 0 : this.props.LineHeight.value,
@@ -1589,7 +1588,7 @@ function modules() {
 				break;
 			case "DropBox":
 				i.run = function (flags) {
-					this.ctl = new DropBox({
+					this.ctl = new UI.DropBox({
 
 					});
 
@@ -1957,12 +1956,12 @@ function modules() {
 						if(!props[o].isDef())
 							f.push(o.toLocaleString() + "=1");
 					}
-					
+
 					if(!props.Width.isDef())
-						f.push("width=" + props.Width.value); 
+						f.push("width=" + props.Width.value);
 					if(!props.Height.isDef())
-						f.push("height=" + props.Height.value); 
-					
+						f.push("height=" + props.Height.value);
+
 					this.parent.wnd = window.open(props.URL.value, props.Name.value, f.join(","));
 					this.parent.onOpen.call();
 				};
@@ -1988,7 +1987,7 @@ function modules() {
 					// 	return null;
 					// }
 
-					this.ctl = new Dialog({
+					this.ctl = new UI.Dialog({
 						title: this.props.Caption.getTranslateValue(),
 						icon: this.props.URL.value,
 						destroy: !(flags & Hion.FLAG_USE_CHILD || flags & Hion.FLAG_USE_EDIT),
@@ -2074,7 +2073,7 @@ function modules() {
 					var result = "";
 					for(var i in this.parent.points) {
 						var point = this.parent.points[i];
-						if(point.type === Hion.pt_data) {
+						if(point.type === Hion.PT_DATA) {
 							if(result) {
 								result += "&";
 							}
@@ -2751,7 +2750,7 @@ function modules() {
 					var range = d.read("Range");
 
 					var req = range instanceof IDBKeyRange ? os.count(range) : os.count();
-					
+
 					req.onsuccess = function(e) {
 						i.onSuccess.call(e.target.result);
 					};
@@ -2774,7 +2773,7 @@ function modules() {
 					else {
 						req = os.getAll();
 					}
-					
+
 					req.onsuccess = function(e) {
 						i.onSuccess.call(e.target.result);
 					};
@@ -2789,7 +2788,7 @@ function modules() {
 					var os = d.read("ObjectStore");
 
 					var req = os.clear();
-					
+
 					req.onsuccess = function(e) {
 						i.onSuccess.call(e.target.result);
 					};
@@ -2802,7 +2801,7 @@ function modules() {
 				i.doGet.onevent = function(data) {
 					var d = this.parent.d(data);
 					var os = d.read("ObjectStore");
-					
+
 					this.parent.index = os.index(this.parent.props.Name.value);
 
 					this.parent.onGet.call(this.parent.index);
@@ -2815,7 +2814,7 @@ function modules() {
 				i.doCreate.onevent = function(data) {
 					var d = this.parent.d(data);
 					var os = d.read("ObjectStore");
-					
+
 					this.parent.index = os.createIndex(this.parent.props.Name.value, this.parent.props.FieldName.value, {unique: !this.parent.props.Unique.isDef()});
 
 					this.parent.onCreate.call(this.parent.index);
@@ -2828,7 +2827,7 @@ function modules() {
 				i.doDelete.onevent = function(data) {
 					var d = this.parent.d(data);
 					var os = d.read("ObjectStore");
-					
+
 					os.deleteIndex(this.parent.props.Name.value);
 
 					this.parent.onDelete.call();
@@ -3113,7 +3112,7 @@ function modules() {
 					VK.Api.call('audio.get', options, function(r) {
 						if(r.response){
 							r.response.shift();
-							self.onGet.call(self.array = r.response); 
+							self.onGet.call(self.array = r.response);
 						}
 						else {
 							self.onError.call(r.error.error_msg);
@@ -3330,7 +3329,7 @@ function modules() {
 					this.parent.source.buffer = data;
 					this.parent.source.playbackRate.value = this.parent.props.Rate.value;
 					this.parent.source.loop = !this.parent.props.Loop.isDef();
-					
+
 					for(var t = 1; t <= this.parent.props.OutputNumber.value; t++) {
 						var out = this.parent.d("").read("Output" + t);
 						if(out instanceof AudioNode)

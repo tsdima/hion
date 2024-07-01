@@ -1,17 +1,18 @@
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const paths = {
   src: path.resolve(__dirname, '../ts'),
-  dist: path.resolve(__dirname, '../dist')
+  dist: path.resolve(__dirname, '../dist'),
 };
 
 module.exports = {
   context: paths.src,
   entry: {
-    app: './main'
+    app: './main.ts'
   },
 
   output: {
@@ -23,11 +24,25 @@ module.exports = {
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "../public/index.html")
+    }),
+    new MiniCssExtractPlugin({
+      linkType: "text/css",
+      filename: 'css/styles.css',
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'assets/img', to: 'img' },
+        { from: 'js', to: 'js' },
+        { from: '../public/cm', to: 'cm' },
+        { from: '../lang', to: 'lang' },
+        { from: '../pack', to: 'pack' },
+        { from: '../gui', to: 'gui' },
+      ]
     })
   ],
 
   resolve: {
-    extensions: ['.ts'] // указание расширений файлов, которые webpack будет обрабатывать, и пытаться добавить автоматически (например получив запрос на index, не найдет его и попробует index.ts)
+    extensions: ['.ts', '.js']
   },
 
   module: {
@@ -35,7 +50,16 @@ module.exports = {
       {
         test: /\.ts$/,
         loader: 'ts-loader'
-      } // загрузчик для обработки файлов с расширением .ts
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          // "style-loader",
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "sass-loader",
+        ],
+      },
     ]
   }
 };

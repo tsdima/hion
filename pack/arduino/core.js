@@ -18,7 +18,7 @@ function arduino() {
 			case "Board":
 				i.run = function(flags) {
 					if(flags & Hion.FLAG_USE_RUN) {
-						this.ctl = new Dialog({
+						this.ctl = new UI.Dialog({
 							title: "Board emulator: " + this.props.Type.getText(),
 							//icon: this.props.URL.value,
 							destroy: !(flags & Hion.FLAG_USE_CHILD || flags & Hion.FLAG_USE_EDIT),
@@ -39,7 +39,7 @@ function arduino() {
 						}
 					}
 					else
-						this.ctl = new Panel({theme: ""});
+						this.ctl = new UI.Panel({theme: ""});
 
 					// this.ctl.layout = this.getLayout(this.ctl);
 					//WinElement.prototype.run.call(this, flags);
@@ -57,7 +57,7 @@ function arduino() {
 				};
 
 				i.getLayout = function(parent) {
-					return new FixLayout(parent);
+					return new UI.FixLayout(parent);
 				};
 
 				i.oninit = function() {
@@ -110,7 +110,7 @@ function arduino() {
 				break;
 			case "Button":
 				i.run = function (flags) {
-					this.ctl = new Button({
+					this.ctl = new UI.Button({
 						caption: this.props.Caption.value,
 						url: "/pack/arduino/icons/Button.ico"
 					});
@@ -124,11 +124,11 @@ function arduino() {
 					return AUIElement.prototype.run.call(this, flags);
 				};
 				i.doCheck.onevent = function(queue) {
-					var state = digitalPins[this.parent.props.Pin.value];
-					var e = this.parent.getMainLink() || this.parent;
-					if(this.parent.props.Mode.isDef() || e.oldState != state) {
+					const state = digitalPins[this.parent.props.Pin.value];
+					const e = this.parent.getMainLink() || this.parent;
+					if(this.parent.props.Mode.isDef() || e.oldState !== state) {
 						e.oldState = state;
-						if(this.parent.props.Mode.value != 2 || state)
+						if(this.parent.props.Mode.value !== 2 || state)
 							queue.push({event: this.parent.onClick, data: state ? 1 : 0});
 					}
 					return 0;
@@ -182,7 +182,7 @@ function arduino() {
 					this.ctl.canvas.translate(0.5, 0.5);
 				};
 				i.doDraw.onevent = function(queue) {
-					var canvas = this.parent.ctl.canvas;
+					const canvas = this.parent.ctl.canvas;
 					canvas.clearRect(0, 0, 128, 64);
 					canvas.strokeStyle = canvas.fillStyle = "black";
 					canvas.cursorX = 0;
@@ -190,7 +190,7 @@ function arduino() {
 					canvas.fontSize = 8;
 					canvas.charInterval = 6;
 					queue.push({event: this.parent.onDraw, data: canvas});
-					return 0;	
+					return 0;
 				};
 				i.Canvas.onevent = function() {
 					return this.parent.ctl.canvas;
@@ -198,10 +198,10 @@ function arduino() {
 				break;
 			case "TextCursor":
 				i.doMove.onevent = function(queue) {
-					var d = this.parent.d(queue.state.data);
-					var canvas = d.read("Canvas");
-					var x = d.readInt("X");
-					var y = d.readInt("Y");
+					const d = this.parent.d(queue.state.data);
+					const canvas = d.read("Canvas");
+					const x = d.readInt("X");
+					const y = d.readInt("Y");
 					canvas.cursorX = x;
 					canvas.cursorY = y;
 					queue.push({event: this.parent.onMove, data: canvas});
@@ -210,9 +210,9 @@ function arduino() {
 				break;
 			case "DrawText":
 				i.doDraw.onevent = function(queue) {
-					var d = this.parent.d(queue.state.data);
-					var canvas = d.read("Canvas");
-					var text = d.read("Text").toString();
+					const d = this.parent.d(queue.state.data);
+					const canvas = d.read("Canvas");
+					const text = d.read("Text").toString();
 					if(this.parent.props.Size.value) {
 						canvas.fontSize = this.parent.props.Size.value == 1 ? 8 : 16;
 						canvas.charInterval = this.parent.props.Size.value == 1 ? 6 : 12;
@@ -222,7 +222,7 @@ function arduino() {
 						canvas.fillStyle = "white";
 					else if(this.parent.props.Color.value == 2)
 						canvas.fillStyle = "black";
-					for(var i = 0; i < text.length; i++) {
+					for(let i = 0; i < text.length; i++) {
 						if(this.parent.props.Color.value == 3) {
 							canvas.fillStyle = "white";
 							canvas.fillRect(canvas.cursorX, canvas.cursorY, canvas.charInterval, canvas.fontSize);
@@ -239,7 +239,7 @@ function arduino() {
 					return 0;
 				};
 				i.doNewLine.onevent = function(queue) {
-					var canvas = this.parent.d(queue.state.data).read("Canvas");
+					const canvas = this.parent.d(queue.state.data).read("Canvas");
 					canvas.cursorY += canvas.fontSize;
 					canvas.cursorX = 0;
 					return 0;
@@ -247,31 +247,31 @@ function arduino() {
 				break;
 			case "DrawPixel":
 				i.doDraw.onevent = function(queue) {
-					var d = this.parent.d(queue.state.data);
-					var canvas = d.read("Canvas");
-					var x = d.readInt("X");
-					var y = d.readInt("Y");
+					const d = this.parent.d(queue.state.data);
+					const canvas = d.read("Canvas");
+					const x = d.readInt("X");
+					const y = d.readInt("Y");
 					if(!this.idata) {
 						this.idata = canvas.createImageData(1,1);
 					}
-					var d = this.idata.data;
-					d[0] = 255;
-					d[1] = 255;
-					d[2] = 255;
-					d[3] = 255;
-					canvas.putImageData(this.idata, x, y);  
+					const color = this.idata.data;
+					color[0] = 255;
+					color[1] = 255;
+					color[2] = 255;
+					color[3] = 255;
+					canvas.putImageData(this.idata, x, y);
 					queue.push({event: this.parent.onDraw, data: canvas});
 					return 0;
 				};
 				break;
 			case "DrawLine":
 				i.doDraw.onevent = function(queue) {
-					var d = this.parent.d(queue.state.data);
-					var canvas = d.read("Canvas");
-					var x1 = d.readInt("X1");
-					var y1 = d.readInt("Y1");
-					var x2 = d.readInt("X2");
-					var y2 = d.readInt("Y2");
+					const d = this.parent.d(queue.state.data);
+					const canvas = d.read("Canvas");
+					const x1 = d.readInt("X1");
+					const y1 = d.readInt("Y1");
+					const x2 = d.readInt("X2");
+					const y2 = d.readInt("Y2");
 					canvas.beginPath();
 					canvas.moveTo(x1, y1);
 					canvas.lineTo(x2, y2);
@@ -283,12 +283,12 @@ function arduino() {
 				break;
 			case "DrawRectangle":
 				i.doDraw.onevent = function(queue) {
-					var d = this.parent.d(queue.state.data);
-					var canvas = d.read("Canvas");
-					var x1 = d.readInt("X1");
-					var y1 = d.readInt("Y1");
-					var x2 = d.readInt("X2");
-					var y2 = d.readInt("Y2");
+					const d = this.parent.d(queue.state.data);
+					const canvas = d.read("Canvas");
+					const x1 = d.readInt("X1");
+					const y1 = d.readInt("Y1");
+					const x2 = d.readInt("X2");
+					const y2 = d.readInt("Y2");
 
 					canvas.strokeStyle = this.parent.props.Color.getText();
 					if(this.parent.props.Type.isDef()) {
@@ -302,15 +302,15 @@ function arduino() {
 				break;
 			case "DrawRoundRectangle":
 				i.doDraw.onevent = function(queue) {
-					var d = this.parent.d(queue.state.data);
-					var canvas = d.read("Canvas");
-					var x1 = d.readInt("X1");
-					var y1 = d.readInt("Y1");
-					var x2 = d.readInt("X2");
-					var y2 = d.readInt("Y2");
+					const d = this.parent.d(queue.state.data);
+					const canvas = d.read("Canvas");
+					const x1 = d.readInt("X1");
+					const y1 = d.readInt("Y1");
+					const x2 = d.readInt("X2");
+					const y2 = d.readInt("Y2");
 
 					canvas.strokeStyle = this.parent.props.Color.getText();
-					var radius = this.parent.props.Radius.value;
+					let radius = this.parent.props.Radius.value;
 					if(radius > (x2 - x1)/2) radius = (x2 - x1)/2;
 					if(radius > (y2 - y1)/2) radius = (y2 - y1)/2;
 					canvas.beginPath();
@@ -335,11 +335,11 @@ function arduino() {
 				break;
 			case "DrawCircle":
 				i.doDraw.onevent = function(queue) {
-					var d = this.parent.d(queue.state.data);
-					var canvas = d.read("Canvas");
-					var x = d.readInt("X");
-					var y = d.readInt("Y");
-					var radius = d.readInt("Radius");
+					const d = this.parent.d(queue.state.data);
+					const canvas = d.read("Canvas");
+					const x = d.readInt("X");
+					const y = d.readInt("Y");
+					const radius = d.readInt("Radius");
 
 					canvas.strokeStyle = this.parent.props.Color.getText();
 					canvas.beginPath();
@@ -365,13 +365,13 @@ function arduino() {
 				i.doTone.onevent = function(queue) {
 					this.parent.doStop.onevent();
 
-					var osc = audioContext.createOscillator();
+					const osc = audioContext.createOscillator();
 					osc.type = "square";
-					var d = this.parent.d(queue.state.data);
+					const d = this.parent.d(queue.state.data);
 					osc.frequency.value = d.readInt("Frequency");
 					osc.connect(audioContext.destination);
 					osc.start();
-					var dur = d.readInt("Duration");
+					const dur = d.readInt("Duration");
 					if(dur)
 						osc.stop(osc.context.currentTime + dur/1000);
 					tones[this.parent.props.Pin.value] = osc;
@@ -394,7 +394,7 @@ function arduino() {
 				break;
 			case "Time":
 				i.CurrentTime.onevent = function() {
-					var t = new Date().getTime();
+					let t = new Date().getTime();
 					if(this.parent.props.Mode.value == 1)
 						t *= 1000;
 					return t;
@@ -472,9 +472,9 @@ function arduino() {
 					return this.parent.result;
 				};
 				i.prepareMask = function(mask) {
-					var s = mask;
+					let s = mask;
 					this.arr = this.props.Args.isDef() ? [] : this.props.Args.value.split("\n");
-					for(var i = 0; i < this.arr.length; i++) {
+					for(let i = 0; i < this.arr.length; i++) {
 						s = s.replace(new RegExp("\\$" + this.arr[i], "g"), "%" + (i+1));
 					}
 					s = s.replace(/\$result/g, "%0");
@@ -499,7 +499,7 @@ function arduino() {
 					Hion.Hub.prototype.onpropchange.call(this, prop);
 					if(prop.name === "InCount") {
 						for(var i in this.points) {
-							if(this.points[i].type === Hion.pt_work) {
+							if(this.points[i].type === Hion.PT_WORK) {
 								this.points[i].onevent = function(queue) {
 									var i = queue.state.index || 1;
 									if(i <= this.parent.props.OutCount.value) {
@@ -519,7 +519,7 @@ function arduino() {
 				break;
 			case "IndexToChannel":
 				i.doEvent.onevent = function(queue) {
-					var name = "onEvent" + (this.parent.d(queue.state.data).readInt("Index") + 1);
+					const name = "onEvent" + (this.parent.d(queue.state.data).readInt("Index") + 1);
 					if(this.parent[name]) {
 						queue.push({event: this.parent[name], data: this.parent.props.Data.value});
 					}
@@ -622,10 +622,10 @@ function arduino() {
 				break;
 			case "If_else":
 				i.doCompare.onevent = function (queue) {
-					var d = this.parent.d(queue.state.data);
-					var op1 = d.read("Op1");
-					var op2 = d.read("Op2");
-					var r;
+					const d = this.parent.d(queue.state.data);
+					const op1 = d.read("Op1");
+					const op2 = d.read("Op2");
+					let r;
 					switch (this.parent.props.Type.value) {
 						case 0:
 							r = op1 == op2;
@@ -699,7 +699,7 @@ function arduino() {
 				};
 				i.oninit = function(){ this.cnt = 0; this.stop = false; };
 				break;
-			
+
 			case "Array":
 				i.doClear.onevent = function(queue) {
 					this.parent.array = [];
@@ -712,8 +712,8 @@ function arduino() {
 				i.oninit = function(){
 					this.array = [];
 					if(!this.props.Array.isDef()) {
-						var sarr = this.props.Array.value.trim().split("\n");
-						for(var s of sarr) {
+						const sarr = this.props.Array.value.trim().split("\n");
+						for(const s of sarr) {
 							this.array.push(parseInt(s));
 						}
 					}
@@ -721,9 +721,9 @@ function arduino() {
 				break;
 			case "ArrayRead":
 				i.doRead.onevent = function(queue) {
-					var d = this.parent.d(queue.state.data);
-					var array = d.read("Array");
-					var index = d.readInt("Index");
+					const d = this.parent.d(queue.state.data);
+					const array = d.read("Array");
+					const index = d.readInt("Index");
 					if(index >= 0 && index < array.length) {
 						this.parent.value = array[index];
 						queue.push({event: this.parent.onRead, data: this.parent.value});
@@ -782,12 +782,12 @@ function arduino() {
 				};
 				break;
 			case "HubEx":
-				for(var p = 0; p < 3; p++) {
+				for(let p = 0; p < 3; p++) {
 					i[i.pIndex[p]].onevent = function(queue) { queue.push({event: this.parent.onEvent, data: queue.state.data}); };
 				}
 				break;
 			case "GetDataEx":
-				for(var p = 0; p < 3; p++) {
+				for(let p = 0; p < 3; p++) {
 					i[i.pIndex[p]].onevent = function(data) { return readProperty(data, this.parent.Data); };
 				}
 				break;
@@ -803,7 +803,7 @@ AUIElement.prototype = Object.create(Hion.SdkElement.prototype);
 
 AUIElement.prototype.place = function(x, y) {
 	Hion.SdkElement.prototype.place.call(this, x, y);
-	
+
 	this.props.Left.value = this.x;
 	this.props.Top.value = this.y;
 };
@@ -820,33 +820,33 @@ Hion.AUIElement = AUIElement;
 //******************************************************************************
 
 function UISvgControl(options) {
-	this.display = new Builder().n("div").class("ui-svgcontrol");
+	this.display = new UI.Builder().div("ui-svgcontrol");
 	this.monitor = this.display.n("div").style("width", "153px").style("height", "153px");
 	this.monitor.n("img").attr("src", options.url).style("width", "100%").style("height", "100%");
 	this._ctl = this.display.element;
 
 	if(options) {
-		
+
 	}
-	
+
 	this.setOptions(options);
 }
 
-UISvgControl.prototype = Object.create(UIControl.prototype);
+UISvgControl.prototype = Object.create(UI.UIControl.prototype);
 
 //******************************************************************************
 // UILed
 //******************************************************************************
 
 function UILed(options) {
-	this.body = new Builder().n("div").class("ui-led");
-	this.led = this.body.n("div").class(options.color);
+	this.body = new UI.Builder().div("ui-led");
+	this.led = this.body.div(options.color);
 	this._ctl = this.body.element;
 
 	this.setOptions(options);
 }
 
-UILed.prototype = Object.create(UIControl.prototype);
+UILed.prototype = Object.create(UI.UIControl.prototype);
 
 UILed.prototype.switch = function(value) {
 	if(value)
@@ -883,12 +883,12 @@ UIOLEDControl.prototype.init = function() {
 //******************************************************************************
 
 function UIPotentiometer(options) {
-	this.body = new Builder().n("div").class("ui-potentiometer").on("onmousedown", function(){
+	this.body = new UI.Builder().div("ui-potentiometer").on("onmousedown", function(){
 		document.addEventListener("mousemove", __sliderMove);
 		document.addEventListener("mouseup", __sliderUp);
 		__sliderManaged = this.parent;
 	}).attr("parent", this);
-	this.slider = this.body.n("div").class("slider");
+	this.slider = this.body.div("slider");
 	this._ctl = this.body.element;
 
 	this.deg = 0;
@@ -898,47 +898,46 @@ function UIPotentiometer(options) {
 	this._setPosition(-45);
 }
 
-UIPotentiometer.prototype = Object.create(UIControl.prototype);
+UIPotentiometer.prototype = Object.create(UI.UIControl.prototype);
 
 UIPotentiometer.prototype._setPosition = function(value) {
 	if(value < 0 && value > -45) {
 		value = -45;
-	}
-	else if(value >= 0 && value < 45) {
+	} else if(value >= 0 && value < 45) {
 		value = 45;
 	}
-	var $slider = this.slider.element;
-	var sliderW = $slider.offsetWidth/2;
-	var radius = this.body.element.offsetWidth/2;
-	var radius2 = radius - 10;
-	var center = radius - sliderW;
+	const $slider = this.slider.element;
+	const sliderW = $slider.offsetWidth/2;
+	const radius = this.body.element.offsetWidth/2;
+	const radius2 = radius - 10;
+	const center = radius - sliderW;
 	$slider.style.transform = 'translate(' + center + 'px, ' + center + 'px) rotate(' + value + 'deg) translate(0, ' + radius2 + 'px)';
 	this.deg = value;
 };
 
-var __sliderManaged = null;
+let __sliderManaged = null;
 function __sliderMove(event) {
-	var $container = __sliderManaged.body.element;
-	var radius = $container.offsetWidth/2;
-	var elPos = { x: $container.offsetLeft, y: $container.offsetTop};
-	var html = $container.parentNode;
+	const $container = __sliderManaged.body.element;
+	const radius = $container.offsetWidth/2;
+	const elPos = { x: $container.offsetLeft, y: $container.offsetTop};
+	let html = $container.parentNode;
 	while(html) {
 		elPos.x += html.offsetLeft || 0;
 		elPos.y += html.offsetTop || 0;
 		html = html.parentNode;
 	}
-	var mPos = {x: event.clientX-elPos.x, y: event.clientY-elPos.y};
-	var atan = Math.atan2(mPos.x-radius, mPos.y-radius);
+	const mPos = {x: event.clientX-elPos.x, y: event.clientY-elPos.y};
+	const atan = Math.atan2(mPos.x-radius, mPos.y-radius);
 
-	var deg = -atan/(Math.PI/180);
+	const deg = -atan/(Math.PI/180);
 	__sliderManaged._setPosition(deg);
-};
+}
 
 function __sliderUp() {
 	document.removeEventListener("mousemove", __sliderMove);
 	document.removeEventListener("mouseup", __sliderUp);
 	__sliderManaged.getControl().style.cursor = "default";
-};
+}
 
 Object.defineProperty(UIPotentiometer.prototype, "position", {
 	get: function() {
@@ -952,4 +951,4 @@ Object.defineProperty(UIPotentiometer.prototype, "position", {
 		else
 			this._setPosition(value/1023*270 - 135 - 180);
 	}
-});
+})

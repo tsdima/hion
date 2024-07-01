@@ -1,36 +1,64 @@
-namespace Hion {
-	//------------------------------------------------------------------------------
-	// menu
-	export var mainMenu: MainMenu = null;
-	export var userMenu: MainMenu = null;
-	export var popupElement: PopupMenu = null;
-	export var popupSDK: PopupMenu = null;
-	export var popupLine: PopupMenu = null;
+import './assets/styles/scss/ui.scss'
 
-	//------------------------------------------------------------------------------
-	// modules
-	export var translate: Translate = null;
-	export var palette: Palette = null;
-	export var propEditor: PropertyEditor = null;
-	export var fileManager: FileManager = null;
-	export var commander: Commander = null;
-	export var mainToolBar: ToolBar = null;
-	export var packMan: PackManager = null;
-	export var docManager: DocumentManageer = null;
+import { MainMenu } from './ui/menu/MainMenu'
+import { MenuItemsList, PopupMenu } from './ui/menu/PopupMenu'
+import { Translate } from './tools/Translate'
+import { FileManager } from './ui/dialogs/FileManager'
+import { Loader } from './tools/loader/Loader'
+import { Builder } from './ui/Builder'
+import { Commander } from './tools/Commander'
+import { PackManager } from './core/pack/PackManager'
+import { DocumentManager } from './ui/panels/document-manager/DocumentManager'
+import { PropertyEditor } from './ui/panels/PropertyEditor'
+import { Palette } from './ui/panels/Palette'
+import { $ } from './ui/Helpers'
+import {
+  API_CONFIG_URL,
+  API_LOGOUT_URL, CONFIG_APP_CATALOG, CONFIG_BUG_REPORT,
+  CONFIG_EMAIL,
+  CONFIG_FORUM, CONFIG_HELP,
+  CONFIG_PROFILE,
+  CONFIG_VERSION,
+  KEY_DELETE
+} from './config'
+import { LoaderTask } from './tools/loader/LoaderTask'
+import { API } from './tools/api'
+import { displayError, fullScreen, fullScreenCancel, getOptionInt, isInFullscreen, setOptionInt } from './tools/tools'
+import { SHATab } from './ui/panels/document-manager/tabs/SHATab'
+import { Runner } from './tools/Runner'
+import { Hion } from './core/element'
+import { UI } from './ui/controls'
 
-	export var user = null;
+export var mainMenu: MainMenu = null
+export var userMenu: MainMenu = null
+export var popupElement: PopupMenu = null
+export var popupSDK: PopupMenu = null
+export var popupLine: PopupMenu = null
+
+//------------------------------------------------------------------------------
+// modules
+export var translate: Translate = null
+export var palette: Palette = null
+export var propEditor: PropertyEditor = null
+export var fileManager: FileManager = null
+export var commander: Commander = null
+export var mainToolBar: UI.ToolBar = null
+export var packMan: PackManager = null
+export var docManager: DocumentManager = null
+
+export var user: { login: string, uid: number, plan: any } = null
 
 	//------------------------------------------------------------------------------
 	// Main workspace
 
-	class Workspace extends UIContainer {
-		constructor (options) {
-			super(options);
+	class Workspace extends UI.UIContainer {
+		constructor (options: UI.UIControlOptions) {
+			super()
 
-			this._ctl = new Builder().div("ui-workspace").element;
-			
+			this._ctl = new Builder().div("ui-workspace").element
+
 			this.setOptions(options);
-			this.layout = new HLayout(this, {});
+			this.layout = new UI.HLayout(this, {})
 		}
 	}
 
@@ -46,7 +74,7 @@ namespace Hion {
 					title: commander.getCaption(cmd),
 					info: commander.getTitle(cmd),
 					command: cmd,
-					click: () => commander.execCommand(this.command)
+					click: () => commander.execCommand(cmd)
 				})
 			}
 		}
@@ -72,16 +100,16 @@ namespace Hion {
 		window.location.reload();
 	}
 
-	function loadWorkspace() {
+	export function loadWorkspace() {
 		const workspace = new Workspace({})
-		workspace.appendTo($("workspace"))
-		
-		const loader = new Loader({havestate: true});
+		workspace.appendTo($.get("workspace"))
+
+		const loader = new Loader({ haveState: true });
 		loader.onload = function() {
-			const tbcommands = ["-", "new", "open", "save", "saveas", "-", "formedit", "bind_rect", "bind_center", "bind_padding", "-", "back", "forward", "-", "delete", "-", "run", "build", "-", "about"];
+			const tbCommands = ["-", "new", "open", "save", "saveas", "-", "formedit", "bind_rect", "bind_center", "bind_padding", "-", "back", "forward", "-", "delete", "-", "run", "build", "-", "about"];
 			const buttons = []
-			for (const i in tbcommands) {
-				const cmd = tbcommands[i]
+			for (const i in tbCommands) {
+				const cmd = tbCommands[i]
 				if (cmd === "-") {
 					buttons.push({ title: "-" })
 				} else {
@@ -89,12 +117,12 @@ namespace Hion {
 						icon: commander.haveIcon(cmd),
 						tag: cmd,
 						title: commander.getTitle(cmd),
-						click: () => commander.execCommand(this.tag)
+						click: () => commander.execCommand(cmd)
 					})
 				}
 			}
-			mainToolBar = new ToolBar(buttons);
-		
+			mainToolBar = new UI.ToolBar(buttons);
+
 			popupElement = createPopup(["copy", "cut", "comment", "-", "delete", "-", "bringtofront", "sendtoback"]);
 			popupSDK = createPopup(["paste", "selectall", "statistic", "-", "undo", "redo"]);
 			popupLine = createPopup(["paste_debug", "paste_dodata", "paste_hub", "-", "linecolor", "lineinfo"]);
@@ -107,66 +135,66 @@ namespace Hion {
 				help: ["forum", "help", "-", "opencatalog", "mail", "sendbug", "-", "about"]
 			}
 			mainMenu = createMainmenu(mmCommands);
-			userMenu = new Hion.MainMenu([{
+			userMenu = new MainMenu([{
 				title: user.login,
 				items: makeItems(["login", "profile", "-", "plan", "-", "logout"])
 			}])
-			
-			const propsToolBar = new ToolBar([{
+
+			const propsToolBar = new UI.ToolBar([{
 				icon: 40,
 				title: "",
 				click: () => { propEditor.visible = true }
 			}])
 
-			const toolBar = $("toolbar")
+			const toolBar = $.get("toolbar")
 			toolBar.appendChild(mainMenu.getControl())
 			toolBar.appendChild(mainToolBar.getControl())
-			toolBar.appendChild(new Builder().n("div").class("separator").element)
-			toolBar.appendChild(new Builder().n("div").class("user").append(userMenu.getControl()).element)
-			toolBar.appendChild(new Builder().n("div").class("hion").attr("title", CONFIG_VERSION).element)
+			toolBar.appendChild(new Builder().div("separator").element)
+			toolBar.appendChild(new Builder().div("user").append(userMenu.getControl()).element)
+			toolBar.appendChild(new Builder().div("hion").attr("title", CONFIG_VERSION).element)
 			toolBar.appendChild(propsToolBar.getControl())
-		
+
 			commander.reset()
 
 			fileManager.updateUser()
 
 			docManager.init()
 
-			$("splash").remove()
-			
+			$.get("splash").remove()
+
 			if(window.location.hash.startsWith("#/public") || window.location.hash.startsWith("#/examples") || window.location.hash.startsWith("#/pack")) {
 				docManager.open(window.location.hash.substring(1), "")
 			}
 		};
 		let packList = []
-		loader.add(new LoaderTask(function(){
-			$.get("/pack/list.txt", function(data: string, task: LoaderTask) {
+		loader.add(new LoaderTask(task => {
+			API.get("/pack/list.txt", (data: string) => {
 				packList = data.trim().split("\n")
-				task.taskComplite("Pack list loaded.")
-			}, this)
+				task.taskComplete("Pack list loaded.")
+			})
 		}))
-		loader.add(new LoaderTask(function(){
-			$.get(API_CONFIG_URL, function(data: string, task: LoaderTask) {
+		loader.add(new LoaderTask(task => {
+			API.get(API_CONFIG_URL, (data: string) => {
 				try {
-					user = JSON.parse(data);
+					user = JSON.parse(data)
 				} catch(e) {
 					console.error("Config load failed")
-					user = {login: "guest", uid: 1};
+					user = {login: "guest", uid: 1, plan: {}}
 				}
-				task.taskComplite("Config loaded.");
-			}, this);
-		}));
-		loader.add(new LoaderTask(function(){
-			translate = new Translate();
-			_T = translate.translate;
-			translate.onload = () => this.taskComplite("Translate loaded.");
-			translate.load();
-		}));
-		loader.add(new LoaderTask(function(){
-			packMan = new PackManager();
-			packMan.onload = () => this.taskComplite("Packs load.");
-			packMan.task = this;
-			packMan.load(packList);
+				task.taskComplete("Config loaded.")
+			})
+		}))
+		loader.add(new LoaderTask(task => {
+			translate = new Translate()
+			// _T = translate.translate
+			translate.onload = () => task.taskComplete("Translate loaded.")
+			translate.load()
+		}))
+		loader.add(new LoaderTask(task => {
+			packMan = new PackManager()
+			packMan.onload = () => task.taskComplete("Packs load.");
+			packMan.task = task
+			packMan.load(packList)
 		}));
 
 		loader.run();
@@ -176,11 +204,11 @@ namespace Hion {
 			commander.execCommand("addelement", obj);
 		};
 		workspace.add(palette);
-		let splitter = new Splitter({edge: 3})
+		let splitter = new UI.Splitter({edge: 3})
 		splitter.setManage(palette);
 		splitter.onresize = function(){ setOptionInt("palette_width", palette.width) };
-		
-		docManager = new DocumentManageer({});
+
+		docManager = new DocumentManager({});
 		docManager.ontabselect = docManager.ontabopen = function(tab){
 			if(tab instanceof SHATab && tab.sdkEditor && tab.sdkEditor.sdk) {
 				// set palette elements
@@ -211,7 +239,7 @@ namespace Hion {
 
 		propEditor = new PropertyEditor({width: getOptionInt("prop_width", 173)});
 		workspace.add(propEditor);
-		splitter = new Splitter({edge: 1, theme: "prop-splitter"});
+		splitter = new UI.Splitter({edge: 1, theme: "prop-splitter"});
 		splitter.setManage(propEditor);
 		splitter.onresize = () => setOptionInt("prop_width", propEditor.width);
 
@@ -219,14 +247,13 @@ namespace Hion {
 		fileManager.onfilename = function(fileName){
 			if(fileManager.openSave) {
 				docManager.save(fileName);
-			}
-			else {
+			} else {
 				docManager.open(fileName, "");
 			}
 			fileManager.close();
 		};
 		fileManager.onerror = (error) => displayError(error);
-		
+
 		commander = new Commander({
 			new: {
 				def: true, icon: 19,
@@ -260,13 +287,13 @@ namespace Hion {
 				exec: () => new Runner("plan").run()
 			},
 			logout: {
-				exec: () => $.get(API_LOGOUT_URL, changeUser)
+				exec: () => API.get(API_LOGOUT_URL, changeUser)
 			},
 			profile: {
 				icon: 55, def: true,
 				exec: () => window.open(CONFIG_PROFILE + user.uid, '_blank')
 			},
-			cut: { icon: 42, exec: () =>this.execCommand("copy").execCommand("delete") },
+			cut: { icon: 42, exec: () => this.execCommand("copy").execCommand("delete") },
 			copy: { icon: 27 },
 			comment: { icon: 33 },
 			paste: { icon: 30 },
@@ -276,11 +303,11 @@ namespace Hion {
 			selectall: { },
 			forum: {
 				def: true,
-				exec: () =>window.open(CONFIG_FORUM, '_blank')
+				exec: () => window.open(CONFIG_FORUM, '_blank')
 			},
 			mail: {
 				def: true, icon: 1,
-				exec: () =>window.location.href =  "mailto:" + CONFIG_EMAIL
+				exec: () => window.location.href =  "mailto:" + CONFIG_EMAIL
 			},
 			bringtofront: { icon: 37 },
 			sendtoback: { icon: 51 },
@@ -300,7 +327,7 @@ namespace Hion {
 			statistic: { icon: 45 },
 			tools: {
 				icon: 4, def: true,
-				exec: () => new Runner("settings", () =>{ /* update options */ }).run()
+				exec: () => new Runner("settings", () => { /* update options */ }).run()
 			},
 			build: { icon: 58 },
 			history: { },
@@ -325,10 +352,10 @@ namespace Hion {
 			},
 			fullscreen: { def: true,
 				exec: function() {
-					if(isInFullscreen())
-						fullScreenCancel();
+					if (isInFullscreen())
+						fullScreenCancel()
 					else
-						fullScreen(document.body);
+						fullScreen(document.body)
 				}
 			},
 			help: { icon: 3, def: true,
@@ -343,35 +370,35 @@ namespace Hion {
 
 			if(user.uid === 1) {
 				this.enabled("login");
-			}
-			else {
+			} else {
 				this.enabled("logout");
 			}
-			
+
 			function updatePopup(menu: PopupMenu) {
-				menu.each(function(index, item){
-					this.enabled(index, commander.isEnabled(item.command));
-					this.checked(index, commander.isChecked(item.command));
-				});
+				menu.each((index, item) => {
+          menu.enabled(index, commander.isEnabled(item.command))
+          menu.checked(index, commander.isChecked(item.command))
+				})
 			}
-			updatePopup(popupElement);
-			updatePopup(popupSDK);
-			mainToolBar.each(function(item){
-				item.enabled = commander.isEnabled(item.tag);
-				item.checked = commander.isChecked(item.tag);
-			});
+			updatePopup(popupElement)
+			updatePopup(popupSDK)
+			mainToolBar.each((item: UI.ToolButton) => {
+				item.enabled = commander.isEnabled(item.tag)
+				item.checked = commander.isChecked(item.tag)
+        return false
+			})
 			let i = 0
-			while(mainMenu.menuItem(i)) {
+			while (mainMenu.menuItem(i)) {
 				updatePopup(mainMenu.menuItem(i++).menu)
 			}
 			i = 0;
 			while(userMenu.menuItem(i)) {
 				updatePopup(userMenu.menuItem(i++).menu);
 			}
-		};
+		}
 		commander.onexec = function(command, data) {
 			docManager.execCommand(command, data);
-		};
+		}
 	}
 
 	window.addEventListener("keydown", function(event){
@@ -383,5 +410,6 @@ namespace Hion {
 		return true
 	})
 
-	window.onload = loadWorkspace;
-}
+window.onload = loadWorkspace
+window['Hion'] = Hion
+window['UI'] = UI
