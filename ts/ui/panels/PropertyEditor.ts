@@ -15,8 +15,6 @@ import { translate } from '../../main'
 import { PropertyEditorItem, UIPropertyEditor } from './UIPropertyEditor'
 import { PointTemplate } from '../../core/pack/Pack'
 
-var _selMan = null;
-
   interface ListBoxItemPoint extends ListBoxItem {
     point: PointTemplate
   }
@@ -182,12 +180,12 @@ var _selMan = null;
 			}
 
       let items: Array<PropertyEditorItem> = [{title: translate.translate("ui.self_props"), header: true, info: ""}]
-			for(const p of getSimilarProps(false)) {
-				items.push(makeProp(p));
+			for (const p of getSimilarProps(false)) {
+				items.push(makeProp(p))
 			}
 			items.push({title: translate.translate("ui.sys_props"), header: true, info: ""});
-			for(const p of getSimilarProps(true)) {
-				items.push(makeProp(p));
+			for (const p of getSimilarProps(true)) {
+				items.push(makeProp(p))
 			}
 			this.editor.edit(items);
 

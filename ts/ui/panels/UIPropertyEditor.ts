@@ -314,19 +314,18 @@ export class UIPropertyEditor extends UIControl<HTMLTableElement> {
     let combo: Builder<HTMLDivElement>
 
     // button
-    if(row.item.type != Hion.DATA_INT && row.item.type != Hion.DATA_REAL) {
+    if (row.item.type != Hion.DATA_INT && row.item.type != Hion.DATA_REAL) {
       let isDropList = row.item.type === Hion.DATA_ENUM || row.item.type === Hion.DATA_ENUMEX || row.item.type === Hion.DATA_COLOR || row.item.type === Hion.DATA_MANAGER;
       line.n("button").html("..").on("onclick", () => {
         if(isDropList) {
-          this._fillDataList(row.item, edit, combo);
-          combo.show();
+          this._fillDataList(row.item, edit, combo)
+          combo.show()
+        } else {
+          this.onadveditor(row.item)
         }
-        else {
-          this.onadveditor(row.item);
-        }
-      });
+      })
 
-      if(isDropList) {
+      if (isDropList) {
         combo = line.div("combo").on("onmousedown", (event: Event) => event.stopPropagation());
         combo.hide();
         edit.on("ondblclick", () => {
