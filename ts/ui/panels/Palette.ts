@@ -149,9 +149,9 @@ export class Palette extends UIContainer {
         }
       });
       tab.addListener("mouseout", function(){
-        if(this.childNodes[0].parent.opened) {
+        if(tab.opened) {
           if(getOptionBool("opt_auto_open", 0)) {
-            this.childNodes[0].parent.opened = false;
+            tab.opened = false
           }
         }
       });
