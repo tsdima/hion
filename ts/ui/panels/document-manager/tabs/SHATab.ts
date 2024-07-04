@@ -234,11 +234,13 @@ export class SHATab extends DocumentTab {
             }
           }]
         })
+        dialog.width = 700
+        dialog.height = 400
+        dialog.show()
 
-        const m = new Builder(dialog.getControl())
+        const m = new Builder(dialog.getContainer())
         let e = m.n("div").style("flexGrow", 1);
         // TODO переделать
-        m.render();
         const editor = CodeMirror(e.element, {
           value: item.value.toString(),
           lineNumbers: getOptionBool("opt_ce_line_numbers", 1),
@@ -251,10 +253,6 @@ export class SHATab extends DocumentTab {
           enterMode: "keep",
           tabMode: "shift"
         })
-
-        dialog.width = 700
-        dialog.height = 400
-        dialog.show()
 
         editor.focus();
       }
