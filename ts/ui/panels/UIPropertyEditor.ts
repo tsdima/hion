@@ -374,7 +374,7 @@ export class UIPropertyEditor extends UIControl<HTMLTableElement> {
           group = {name: item.group, items: []}
           let g = this.body.n("tr").n("td").attr("colSpan", 2).div("out pe-title pe-group")
           let div = g.span("checkboxspoiler")
-          let checkBox = div.checkbox("").checked(this.groupState[group.name])
+          let checkBox = div.checkbox("").checked(this.groupState[group.name] || false)
           let itemgroup = group;
           div.n("span").on("onclick", () => {
             let checked = !checkBox.checked()
