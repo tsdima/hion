@@ -2061,11 +2061,9 @@ function modules() {
 				i.flags |= Hion.IS_PARENT;
 				break;
 			case "Host":
-				i.doIP.onevent = function() {
-					$.get(window.API_IP_URL, function(data, object) {
-						object.onIP.call(data);
-					}, this.parent);
-				};
+				i.doIP.onevent = () => {
+					API.get(window.API_IP_URL, i.onIP.call)
+				}
 				break;
 			case "URLBuilder":
 				i.doBuild.onevent = function(data) {
@@ -2088,17 +2086,16 @@ function modules() {
 				i.onpropchange(i.props.Args);
 				break;
 			case "HTTP_Get":
-				i.doDownload.onevent = function(data) {
-					$.post(window.API_GET_URL, {url: readProperty(data, this.parent.URL, this.parent.props.URL.value)}, function(data, object) {
-						if(this.status != 200) {
-							var error = JSON.parse(data);
-							object.onError.call(error.code);
+				i.doDownload.onevent = (data) => {
+					API.post(window.API_GET_URL, {url: readProperty(data, i.URL, i.props.URL.value)}, (data) => {
+						if (this.status != 200) {
+							const error = JSON.parse(data);
+							i.onError.call(error.code);
+						} else {
+							i.onDownload.call(data);
 						}
-						else {
-							object.onDownload.call(data);
-						}
-					}, this.parent);
-				};
+					})
+				}
 				break;
 			case "XMLHttpRequest":
 				i.doOpen.onevent = function(data) {
@@ -2119,8 +2116,7 @@ function modules() {
 					this.parent.xhr.onload = function() {
 						if(this.status != 200) {
 							i.onError.call(this.status);
-						}
-						else {
+						} else {
 							if(i.props.ResponseType.isDef())
 								i.data = this.responseText;
 							else if(i.props.ResponseType.value == 3)

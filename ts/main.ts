@@ -13,7 +13,7 @@ import { PropertyEditor } from './ui/panels/PropertyEditor'
 import { Palette } from './ui/panels/Palette'
 import { $ } from './ui/Helpers'
 import {
-  API_CONFIG_URL,
+  API_CONFIG_URL, API_GET_URL, API_IP_URL,
   API_LOGOUT_URL, CONFIG_APP_CATALOG, CONFIG_BUG_REPORT,
   CONFIG_EMAIL,
   CONFIG_FORUM, CONFIG_HELP,
@@ -413,3 +413,6 @@ export var user: { login: string, uid: number, plan: any } = null
 window.onload = loadWorkspace
 window['Hion'] = Hion
 window['UI'] = UI
+window['API'] = API
+window['API_GET_URL'] = API_GET_URL
+window['API_IP_URL'] = API_IP_URL
