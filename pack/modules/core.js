@@ -2328,7 +2328,7 @@ function modules() {
 					this.parent.ctl.setCenter(data[0], data[1]);
 				};
 				i.run = function (flags) {
-					this.ctl = new YaMap();
+					this.ctl = new UI.YaMap();
 
 					return WinElement.prototype.run.call(this, flags);
 				};
@@ -2343,7 +2343,7 @@ function modules() {
 				break;
 			case "YouTube":
 				i.run = function(flags) {
-					this.ctl = new YouTube({url: this.props.URL.value});
+					this.ctl = new UI.YouTube({url: this.props.URL.value});
 
 					return WinElement.prototype.run.call(this, flags);
 				};
