@@ -62,7 +62,7 @@ export class RangeSlider extends UIControl<HTMLDivElement> {
         }
         __rangeSlider.startValue = event.layerX
         __rangeSlider.startX = event.clientX
-        __rangeSlider.ctl = this.parent
+        __rangeSlider.ctl = this
         __rangeSlider.mode = d1 < d2 ? 0 : 1;
         document.addEventListener("mousemove", __rangeSlider.move)
         document.addEventListener("mouseup", __rangeSlider.up)
