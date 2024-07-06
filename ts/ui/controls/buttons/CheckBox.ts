@@ -50,4 +50,8 @@ export class CheckBox extends UIControl<HTMLLabelElement> {
   public set checked(value: boolean) {
     this._check.checked = value
   }
+
+  public get checked(): boolean {
+    return this._check.checked
+  }
 }
