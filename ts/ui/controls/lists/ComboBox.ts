@@ -29,7 +29,7 @@ export class ComboBox extends UIControl<HTMLSelectElement> {
   }
 
   private _makeItem() {
-    return this.combo.n("option").attr("parent", this).attr("index", this.items.length - 1)
+    return this.combo.n("option").attr("parent", this)
   }
 
   public select(item: HTMLOptionElement) {
