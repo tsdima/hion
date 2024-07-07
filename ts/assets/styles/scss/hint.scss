@@ -11,14 +11,18 @@
     position: absolute;
     overflow: hidden;
     animation: opacity 0.3s;
-    
+
+    & > div {
+        padding: 3px;
+    }
+    & > div + div {
+        border-top: 1px solid $hintDelimiterColor;
+    }
+
     .header {
-        border-bottom: 1px dotted $borderColor;
         font-weight: bold;
     }
-    .footer {
-        border-top: 1px dotted $borderColor;
-    }
+    .footer {}
     .icon {
         vertical-align: middle;
         margin-right: 4px;
