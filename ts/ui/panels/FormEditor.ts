@@ -48,17 +48,6 @@ class FormState {
 
 const frm_ms: FormState = new FormState()
 
-function placeCtl(ctl: HTMLElement, pos) {
-  ctl.className += " frm-ctl"
-  ctl.style.left = pos.Left.value.toString() + "px"
-  ctl.style.top = pos.Top.value.toString() + "px"
-  ctl.style.width = pos.Width.value.toString() + "px"
-  ctl.style.height = pos.Height.value.toString() + "px"
-  if (pos.Hint.value) {
-    ctl.title = pos.Hint.value
-  }
-}
-
 export class FormEditor {
   private parentElement: Hion.WinContainer = null;
   private ctrl:FEItem[] = null;
@@ -69,7 +58,7 @@ export class FormEditor {
 
   // Элементы управления формы
   /** Parent container */
-  private editor: Panel;
+  private readonly editor: Panel;
   /** Container for project ui controls */
   private elements: Panel;
   private mainContainer: Builder;
@@ -83,8 +72,15 @@ export class FormEditor {
   private nodes: Builder[] = [];
   private toolsLayer: Builder;
 
+  /** Global event handler for dragging markers to resize the editable form */
+  private readonly globalMouseMove: (event: MouseEvent) => void
+  private readonly globalMouseUp: () => void
+
   constructor (private sdkEditor: SdkEditor) {
     this.editor = new Panel({theme: "form-editor"});
+
+    this.globalMouseMove = event => this.handleParentGripMove(event)
+    this.globalMouseUp = () => this.handleParentGripUp()
   }
 
   edit(sdk: SDK) {
@@ -98,6 +94,7 @@ export class FormEditor {
     this.sdk = sdk;
     sdk.onremoveelement = (e: Hion.SdkElement) => this.removeElement(e);
 
+    // search parent element for current container
     for (const element of sdk.imgs) {
       if (element.flags | Hion.IS_PARENT && element.props.Width) {
         this.parentElement = element as Hion.WinContainer;
@@ -364,8 +361,8 @@ export class FormEditor {
   private handleParentGripUp() {
     this.gripsParent[this.parentGripActive].parent().style("cursor", "");
     frm_ms.state = FormOperationState.FRM_NONE;
-    document.removeEventListener("mousemove", this.handleParentGripMove);
-    document.removeEventListener("mouseup", this.handleParentGripUp);
+    document.removeEventListener("mousemove", this.globalMouseMove)
+    document.removeEventListener("mouseup", this.globalMouseUp)
   }
 
   private moveParentGrips() {
@@ -396,8 +393,8 @@ export class FormEditor {
         this.parentGripActive = i;
         frm_ms.x = event.screenX;
         frm_ms.y = event.screenY;
-        document.addEventListener("mousemove", this.handleParentGripMove);
-        document.addEventListener("mouseup", this.handleParentGripUp);
+        document.addEventListener("mousemove", this.globalMouseMove)
+        document.addEventListener("mouseup", this.globalMouseUp)
       })
 
       this.gripsParent.push(d);
