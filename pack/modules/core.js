@@ -52,6 +52,7 @@ function componentToHex(c) {
 }
 
 function modules() {
+  /** @param {Hion.SdkElement} i */
 	this.init = function(i) {
 		switch (i.name) {
 			case "Button":
@@ -196,22 +197,14 @@ function modules() {
 				};
 				break;
 			case "Memo":
-				i.doAdd.onevent = function (data) {
-					this.parent.ctl.add(readProperty(data, this.parent.Str));
-				};
-				i.doText.onevent = function (data) {
-					this.parent.ctl.text = readProperty(data, this.parent.Str);
-				};
-				i.Text.onevent = function (data) {
-					return this.parent.ctl.text;
-				};
+				i.doAdd.onevent = data => i.ctl.add(readProperty(data, i.Str))
+				i.doText.onevent = data => i.ctl.text = readProperty(data, i.Str)
+				i.Text.onevent = () => i.ctl.text
 				i.run = function (flags) {
-					this.ctl = new UI.Memo({text: this.props.Text.value});
+					i.ctl = new UI.Memo({text: this.props.Text.value});
 
-					if(i.Position) {
-						i.Position.onevent = function (data) {
-							return this.parent.ctl.caretStart;
-						};
+					if (i.Position) {
+						i.Position.onevent = () => i.ctl.caretStart
 					}
 
 					return WinElement.prototype.run.call(this, flags);
@@ -704,15 +697,15 @@ function modules() {
 				break;
 			case "LinearGradient":
 				i.doCreate.onevent = function(data) {
-					var d = this.parent.d(data);
-					var canvas = d.read("Canvas");
-					var point1 = d.read("Point1");
-					var point2 = d.read("Point2");
-					var props = this.parent.props;
-					var x1 = point1.x || props.X1.value;
-					var y1 = point1.y || props.Y1.value;
-					var x2 = point2.x || props.X2.value;
-					var y2 = point2.y || props.Y2.value;
+					const d = this.parent.d(data)
+					const canvas = d.read("Canvas")
+					const point1 = d.read("Point1")
+					const point2 = d.read("Point2")
+					const props = this.parent.props
+					const x1 = point1.x || props.X1.value
+					const y1 = point1.y || props.Y1.value
+					const x2 = point2.x || props.X2.value
+					const y2 = point2.y || props.Y2.value
 					this.parent.gradient = canvas.createLinearGradient(x1, y1, x2, y2);
 					this.parent.onCreate.call(this.parent.gradient);
 				};
@@ -722,17 +715,17 @@ function modules() {
 				break;
 			case "RadialGradient":
 				i.doCreate.onevent = function(data) {
-					var d = this.parent.d(data);
-					var canvas = d.read("Canvas");
-					var point1 = d.read("Point1");
-					var r1 = d.readFloat("Radius1");
-					var point2 = d.read("Point2");
-					var r2 = d.readFloat("Radius2");
-					var props = this.parent.props;
-					var x1 = point1.x || props.X1.value;
-					var y1 = point1.y || props.Y1.value;
-					var x2 = point2.x || props.X2.value;
-					var y2 = point2.y || props.Y2.value;
+					const d = this.parent.d(data)
+					const canvas = d.read("Canvas")
+					const point1 = d.read("Point1")
+					const r1 = d.readFloat("Radius1")
+					const point2 = d.read("Point2")
+					const r2 = d.readFloat("Radius2")
+					const props = this.parent.props
+					const x1 = point1.x || props.X1.value
+					const y1 = point1.y || props.Y1.value
+					const x2 = point2.x || props.X2.value
+					const y2 = point2.y || props.Y2.value
 					this.parent.gradient = canvas.createRadialGradient(x1, y1, r1, x2, y2, r2);
 					this.parent.onCreate.call(this.parent.gradient);
 				};
@@ -742,10 +735,10 @@ function modules() {
 				break;
 			case "GradientStopColor":
 				i.doAdd.onevent = function(data) {
-					var d = this.parent.d(data);
-					var grad = d.read("Gradient");
-					var index = d.readFloat("Index");
-					var color = d.read("Color");
+					const d = this.parent.d(data);
+					const grad = d.read("Gradient");
+					const index = d.readFloat("Index");
+					const color = d.read("Color");
 					grad.addColorStop(index, color);
 					this.parent.onAdd.call(grad);
 				};
@@ -762,30 +755,30 @@ function modules() {
 				break;
 			case "RectPath":
 				i.doRect.onevent = function(data) {
-					var d = this.parent.d(data);
-					var canvas = d.read("Canvas");
-					var point1 = d.read("Point1");
-					var point2 = d.read("Point2");
-					var props = this.parent.props;
-					var x1 = point1.x || props.X1.value;
-					var y1 = point1.y || props.Y1.value;
-					var x2 = point2.x || props.X2.value;
-					var y2 = point2.y || props.Y2.value;
+					const d = this.parent.d(data);
+					const canvas = d.read("Canvas");
+					const point1 = d.read("Point1");
+					const point2 = d.read("Point2");
+					const props = this.parent.props;
+					const x1 = point1.x || props.X1.value;
+					const y1 = point1.y || props.Y1.value;
+					const x2 = point2.x || props.X2.value;
+					const y2 = point2.y || props.Y2.value;
 					canvas.rect(x1, y1, x2, y2);
 					this.parent.onRect.call(canvas);
 				};
 				break;
 			case "ArcPath":
 				i.doArc.onevent = function(data) {
-					var d = this.parent.d(data);
-					var canvas = d.read("Canvas");
-					var point = d.read("Point");
-					var radius = d.read("Radius");
-					var startAngle = d.readFloat("StartAngle");
-					var endAngle = d.readFloat("EndAngle");
-					var props = this.parent.props;
-					var x = point.x || props.X.value;
-					var y = point.y || props.Y.value;
+					const d = this.parent.d(data);
+					const canvas = d.read("Canvas");
+					const point = d.read("Point");
+					const radius = d.read("Radius");
+					const startAngle = d.readFloat("StartAngle");
+					const endAngle = d.readFloat("EndAngle");
+					const props = this.parent.props;
+					const x = point.x || props.X.value;
+					const y = point.y || props.Y.value;
 
 					canvas.arc(x, y, radius, startAngle, endAngle);
 					this.parent.onArc.call(canvas);
@@ -793,15 +786,15 @@ function modules() {
 				break;
 			case "DrawQuadraticCurve":
 				i.doDraw.onevent = function(data) {
-					var d = this.parent.d(data);
-					var canvas = d.read("Canvas");
-					var point1 = d.read("CPoint");
-					var point2 = d.read("Point");
-					var props = this.parent.props;
-					var x1 = point1.x || props.CX.value;
-					var y1 = point1.y || props.CY.value;
-					var x2 = point2.x || props.X.value;
-					var y2 = point2.y || props.Y.value;
+					const d = this.parent.d(data);
+					const canvas = d.read("Canvas");
+					const point1 = d.read("CPoint");
+					const point2 = d.read("Point");
+					const props = this.parent.props;
+					const x1 = point1.x || props.CX.value;
+					const y1 = point1.y || props.CY.value;
+					const x2 = point2.x || props.X.value;
+					const y2 = point2.y || props.Y.value;
 
 					canvas.quadraticCurveTo(x1, y1, x2, y2);
 					this.parent.onDraw.call(canvas);
@@ -809,18 +802,18 @@ function modules() {
 				break;
 			case "DrawBezierCurve":
 				i.doDraw.onevent = function(data) {
-					var d = this.parent.d(data);
-					var canvas = d.read("Canvas");
-					var point1 = d.read("CPoint1");
-					var point2 = d.read("CPoint2");
-					var point = d.read("Point");
-					var props = this.parent.props;
-					var x1 = point1.x || props.CX1.value;
-					var y1 = point1.y || props.CY1.value;
-					var x2 = point2.x || props.CX2.value;
-					var y2 = point2.y || props.CY2.value;
-					var x = point.x || props.X.value;
-					var y = point.y || props.Y.value;
+					const d = this.parent.d(data);
+					const canvas = d.read("Canvas");
+					const point1 = d.read("CPoint1");
+					const point2 = d.read("CPoint2");
+					const point = d.read("Point");
+					const props = this.parent.props;
+					const x1 = point1.x || props.CX1.value;
+					const y1 = point1.y || props.CY1.value;
+					const x2 = point2.x || props.CX2.value;
+					const y2 = point2.y || props.CY2.value;
+					const x = point.x || props.X.value;
+					const y = point.y || props.Y.value;
 
 					canvas.bezierCurveTo(x1, y1, x2, y2, x, y);
 					this.parent.onDraw.call(canvas);
