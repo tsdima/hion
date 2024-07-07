@@ -33,4 +33,8 @@ export class Memo extends UIControl<HTMLTextAreaElement> {
   public set text(value: string) {
     this._ctl.value = value
   }
+
+  public get text(): string {
+    return this._ctl.value
+  }
 }
