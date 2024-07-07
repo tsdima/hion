@@ -313,7 +313,7 @@ import { UIContainer } from '../ui/controls/UIContainer'
 			let e: Hion.SdkElement = null;
 			let index = start ? start : 0;
 
-			const replacedIDS = {};
+			const replacedIDS: { [id: number]: Hion.SdkElement } = {};
 			const getElementById = (id: number) => flags & SDK_PARSE_PASTE ? replacedIDS[id] : this.findElementById(id)
 
 			if (index === 0 && (flags & SDK_PARSE_FILE)) {
@@ -440,7 +440,7 @@ import { UIContainer } from '../ui/controls/UIContainer'
 					const p2 = e2.findPointByName(links[i].dstp)
 					if (p1 && p2) {
 						p1.connect(p2)
-						const lk = links[i].links.substring(2, links[i].links.length - 2);
+						const lk = links[i].links.length > 4 ? links[i].links.substring(2, links[i].links.length - 3) : ''
 						if (lk) {
 							const pts = lk.split(")(");
 							let n = p1.pos;
