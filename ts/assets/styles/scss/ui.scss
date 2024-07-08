@@ -213,7 +213,7 @@
                 min-width: 0;
                 font-size: $fontSize;
                 flex-grow: 1;
-                padding-top: 1px;
+                padding: 1px 0 0;
                 &:focus { outline: 0; }
             }
             button {

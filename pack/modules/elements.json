@@ -1,6 +1,6 @@
 {
 	"element": {},
-	
+
 	"wincontrol": {
 		"class": "WinElement",
 		"points": [
@@ -52,7 +52,7 @@
 			{ "name": "Padding", "type": 1, "def": 0, "group": "layout" }
 		]
 	},
-	
+
 	"SiteWidget": {
 		"tab": "*",
 		"inherit": "wincontainer",
@@ -64,7 +64,7 @@
 			{ "name": "Height", "def": 300 }
 		]
 	},
-	
+
 	"standart": { "tab": "interface", "group": true },
 	"MainForm": {
 		"tab": "interface",
@@ -96,7 +96,7 @@
 			{ "name": "HAlign", "type": 4, "def": 0, "list": "Left,Center,Right" },
 			{ "name": "VAlign", "type": 4, "def": 1, "list": "Top,Center,Bottom" },
 			{ "name": "Link", "type": 14, "def": 0, "list": "false,true" },
-			{ "name": "Width", "def": 50 },
+			{ "name": "Width", "def": 120 },
 			{ "name": "Height", "def": 14 }
 		]
 	},
@@ -111,8 +111,8 @@
 			{ "name": "URL", "type": 2, "def": "", "editor": "url_editor" },
 			{ "name": "Align", "type": 4, "def": 0, "list": "Vertical,Horizontal,ReverseHorizontal" },
 			{ "name": "Data", "type": 3, "def": "", "flags": 1 },
-			{ "name": "Width", "def": 45 },
-			{ "name": "Height", "def": 21 }
+			{ "name": "Width", "def": 87 },
+			{ "name": "Height", "def": 35 }
 		]
 	},
 	"CheckBox": {
@@ -126,7 +126,7 @@
 		"props": [
 			{ "name": "Caption", "type": 2, "def": "CheckBox", "flags": 1 },
 			{ "name": "Checked", "type": 14, "def": 0, "list": "false,true" },
-			{ "name": "Width", "def": 73 },
+			{ "name": "Width", "def": 120 },
 			{ "name": "Height", "def": 21 }
 		]
 	},
@@ -142,7 +142,7 @@
 			{ "name": "Caption", "type": 2, "def": "Radio", "flags": 1 },
 			{ "name": "Checked", "type": 14, "def": 0, "list": "false,true" },
 			{ "name": "Name", "type": 2, "def": "group" },
-			{ "name": "Width", "def": 73 },
+			{ "name": "Width", "def": 120 },
 			{ "name": "Height", "def": 21 }
 		]
 	},
@@ -158,8 +158,8 @@
 		"props": [
 			{ "name": "Text", "type": 2, "def": "", "flags": 1 },
 			{ "name": "PlaceHolder", "type": 2, "def": "" },
-			{ "name": "Width", "def": 50 },
-			{ "name": "Height", "def": 21 },
+			{ "name": "Width", "def": 120 },
+			{ "name": "Height", "def": 28 },
 			{ "name": "Password", "type": 14, "def": 0, "list": "false,true" },
 			{ "name": "Pattern", "type": 2, "def": "" }
 		]
@@ -226,7 +226,7 @@
 			{ "name": "Engine", "type": 4, "def": 0, "list": "Custom,Native" },
 			{ "name": "Position", "type": 1, "def": 0 },
 			{ "name": "Max", "type": 1, "def": 100 },
-			{ "name": "Width", "def": 50 },
+			{ "name": "Width", "def": 120 },
 			{ "name": "Height", "def": 21 }
 		]
 	},
@@ -243,7 +243,7 @@
 			{ "name": "Max", "type": 1, "def": 10 },
 			{ "name": "Step", "type": 1, "def": 1 },
 			{ "name": "Value", "type": 1, "def": 0 },
-			{ "name": "Width", "def": 100 },
+			{ "name": "Width", "def": 120 },
 			{ "name": "Height", "def": 21 }
 		]
 	},
@@ -513,7 +513,7 @@
 			{ "name" : "URL", "type": 2, "def" : "" }
 		]
 	},
-	
+
 	"core": { "tab": "ide", "group": true },
 	"hcTransmitter": {
 		"tab": "ide",
@@ -544,7 +544,7 @@
 			{ "name": "Plan", "type": 3 }
 		]
 	},
-	
+
 	"chartdata": { "tab": "googlechart", "group": true },
 	"ChartData": {
 		"tab": "googlechart",
@@ -645,7 +645,7 @@
 			{ "name": "Height", "def": 300 }
 		]
 	},
-	
+
 	"Firebase": {
 		"tab": "firebase",
 		"points": [
@@ -895,7 +895,7 @@
 			{ "name": "ObjectStore", "type": 4 }
 		]
 	},
-	
+
 	"canvasfigure": {
 		"points": [
 			{ "name": "doDraw", "type": 1 },
@@ -1504,7 +1504,7 @@
 			{ "name": "doBuffer", "type": 1 }
 		]
 	},
-	
+
 	"Converter": {
 		"tab": "tools",
 		"points": [
@@ -1595,7 +1595,7 @@
 			{ "name": "Default", "type": 7, "def": 0 }
 		]
 	},
-	
+
 	"logic": { "tab": "tools", "group": true },
 	"If_else": {
 		"tab": "tools",
@@ -1727,7 +1727,7 @@
 			{ "name": "Default", "type": 4, "def": 1, "list": "On,Off"}
 		]
 	},
-	
+
 	"containers": { "tab": "tools", "group": true },
 	"MultiElement": {
 		"tab": "tools",
@@ -1769,7 +1769,7 @@
 			{ "name": "Height", "type": 1, "def": 200 }
 		]
 	},
-	
+
 	"json": { "tab": "tools", "group": true },
 	"JSON": {
 		"tab": "tools",
@@ -2256,7 +2256,7 @@
 			{ "name": "Mask", "type": 2, "def": "", "flags": 1 }
 		]
 	},
-	
+
 	"FileInfo": {
 		"tab": "files",
 		"points": [
@@ -2291,7 +2291,7 @@
 			{ "name": "Select", "type": 4, "def": 0, "list": "Single,Multi" }
 		]
 	},
-	
+
 	"Message": {
 		"tab": "controls",
 		"points": [
@@ -2374,7 +2374,7 @@
 			{ "name": "Height", "type": 4, "data": 1, "flags": 1 }
 		]
 	},
-	
+
 	"Host": {
 		"tab": "remote",
 		"points": [
@@ -2429,7 +2429,7 @@
 			{ "name": "Password", "type": 2, "def": "" }
 		]
 	},
-	
+
 	"design": {},
 	"InfoTip": {},
 	"LinkTip": {},
