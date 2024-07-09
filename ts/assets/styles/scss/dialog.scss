@@ -18,13 +18,13 @@
     }
 
     > .caption {
-        height: 16px;
+        height: 20px;
         min-height: 16px;
         padding: 2px 2px 2px 26px;
         font-weight: bold;
         font-size: $fontSize;
         color: white;
-        background: $formBgColor url("../../img/sha.png") no-repeat 3px 2px;
+        background: $formBgColor url("../../img/sha.png") no-repeat 3px 4px;
         white-space: nowrap;
         display: flex;
         align-items: center;
@@ -34,7 +34,6 @@
             flex-grow: 1;
             overflow: hidden;
             text-overflow: ellipsis;
-            height: 100%;
             cursor: move;
         }
 
