@@ -67,9 +67,9 @@ import { UIContainer } from '../ui/controls/UIContainer'
 		scrollY: number
 		undo: UndoManager
 
-		ondraw = () => {};
-		onaddelement = (element: Hion.SdkElement) => {};
-		onremoveelement = (element: Hion.SdkElement) => {};
+		ondraw = () => {}
+		onaddelement = (element: Hion.SdkElement) => {}
+		onremoveelement = (element: Hion.SdkElement) => {}
 
 		constructor(public pack: Pack) {
 			this.selMan = new SelectManager(this);
@@ -91,7 +91,7 @@ import { UIContainer } from '../ui/controls/UIContainer'
 			}
 		}
 
-		linebypos(p: Point, x: number, y: number) {
+		private lineByPos(p: Point, x: number, y: number) {
 			if (p.point === null)
 				return null;
 			let fp = p.pos
@@ -162,7 +162,7 @@ import { UIContainer } from '../ui/controls/UIContainer'
 						}
 
 						// line
-						const line = this.linebypos(p, x, y);
+						const line = this.lineByPos(p, x, y);
 						if (line)
 							return {type: OBJ_TYPE_LINE, obj: line, point: p};
 					}
@@ -307,9 +307,9 @@ import { UIContainer } from '../ui/controls/UIContainer'
 			if (arr.length < 2) {
         arr = text.split("\n");
       }
-			const links: Array<{ srce: Hion.SdkElement, srcp: string, dste: number, dstp: string, links: string }> = [];
-			const pointColors = [];
-			const pointInfo = [];
+			const links: Array<{ srce: Hion.SdkElement, srcp: string, dste: number, dstp: string, links: string }> = []
+			const pointColors: Array<{ name: string, color: string, element: Hion.SdkElement }> = []
+			const pointInfo: Array<{ name: string, direction: number, text: string, element: Hion.SdkElement }> = []
 			let e: Hion.SdkElement = null;
 			let index = start ? start : 0;
 
@@ -405,9 +405,10 @@ import { UIContainer } from '../ui/controls/UIContainer'
 					const i = val.indexOf(",");
 					pointColors.push({name: val.substring(0, i), color: val.substring(i+1), element: e})
 				} else if(line.startsWith("PInfo")) {
-					const val = line.substring(6, line.length - 1);
-					const i = val.indexOf(",");
-					pointInfo.push({name: val.substring(0, i), direction: val.substring(i+1, 1), text: val.substring(i+3).replace("\\n", "\n"), element: e})
+					const val = line.substring(6, line.length - 1)
+					const i = val.indexOf(",")
+          const direction = parseInt(val.substring(i+1, i+2))
+					pointInfo.push({name: val.substring(0, i), direction, text: val.substring(i+3).replace("\\n", "\n"), element: e})
 				} else if(line.startsWith("elink")) {
 					const eid = parseInt(line.substring(6, line.length - 1));
 					const le = this.findElementById(eid);
