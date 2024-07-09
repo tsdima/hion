@@ -315,14 +315,15 @@ export class SHATab extends DocumentTab {
       }
 
       if (sdk !== this.sdkEditor.sdk) {
+        const currentSdk = sdk
         l.addListener("click", () => {
           if (this.fEditor) {
-            this.formEditor();
+            this.formEditor()
           }
-          this.sdkEditor.edit(sdk);
+          this.sdkEditor.edit(currentSdk)
         })
       }
-      sdk = sdk.parent;
+      sdk = sdk.parent
     }
   }
 
