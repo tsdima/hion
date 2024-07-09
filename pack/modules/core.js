@@ -2849,7 +2849,7 @@ function modules() {
 				break;
 			case "AudioPlayer":
 				i.run = function(flags) {
-					this.ctl = new AudioPlayer({url: this.props.URL.value, controls: this.props.Controls.value, autoplay: this.props.Autoplay.value});
+					this.ctl = new UI.AudioPlayer({url: this.props.URL.value, controls: this.props.Controls.value, autoplay: this.props.Autoplay.value});
 					this.ctl.addListener("ended", function(){
 						i.onPlay.call();
 					});
