@@ -12,8 +12,13 @@ import { HLayout } from '../ui/controls/layouts/HLayout'
 import { VLayout } from '../ui/controls/layouts/VLayout'
 import { FlexLayoutOptions } from '../ui/controls/layouts/FlexLayout'
 import { Splitter } from '../ui/controls/Splitter'
+import { Translate } from '../tools/Translate'
 
 export module Hion {
+
+  export var user: { login: string, uid: number, plan: any } = null
+  export var translate: Translate = null
+
   export const IS_SELECT     = 0x01
 	export const IS_PARENT     = 0x02
 	export const IS_NODELETE   = 0x04

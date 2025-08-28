@@ -181,6 +181,7 @@ export var user: { login: string, uid: number, plan: any } = null
 					console.error("Config load failed")
 					user = {login: "guest", uid: 1, plan: {}}
 				}
+				Hion.user = user
 				task.taskComplete("Config loaded.")
 			})
 		}))
@@ -189,6 +190,7 @@ export var user: { login: string, uid: number, plan: any } = null
 			// _T = translate.translate
 			translate.onload = () => task.taskComplete("Translate loaded.")
 			translate.load()
+			Hion.translate = translate
 		}))
 		loader.add(new LoaderTask(task => {
 			packMan = new PackManager()
