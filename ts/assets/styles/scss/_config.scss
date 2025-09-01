@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $borderColor: gray;
 $borderRadius: 3px;
 
@@ -8,8 +10,8 @@ $controlColor: #efe9e3;
 $faceColor: #999;
 $bgColor: #c9b9ab;
 $bgColorActive: #66ccff;
-$borderLight: lighten($controlColor, 10%);
-$borderDark: darken($controlColor, 10%);
+$borderLight: color.adjust($controlColor, $lightness: 10%);
+$borderDark: color.adjust($controlColor, $lightness: -10%);
 $bgColorHover: $controlColor;
 $inputBgColor: white;
 
