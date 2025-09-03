@@ -1086,6 +1086,7 @@ function modules() {
 					if(this.css == null) {
 						this.css = document.createElement("style");
 						this.css.innerHTML = this.props.StyleSheet.value;
+						this.css.nonce = window['API_NONCE'];
 						document.head.appendChild(this.css);
 						this.cssref = 1;
 					} else {

@@ -22,6 +22,7 @@ export class $ {
   public static appendScript(source: string, onload: () => void) {
     const sc = document.createElement("script")
     sc.src = source;
+    sc.nonce = window['API_NONCE'];
     sc.type="text/javascript"
     if (onload) {
       sc.onload = onload
