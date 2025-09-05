@@ -1,5 +1,3 @@
-import { API } from '../../tools/api'
-import { translate } from '../../main'
 import { $ } from '../../ui/Helpers'
 import { Hion } from '../element'
 
@@ -85,10 +83,10 @@ interface TranslateList {
 
 		isEntry(name: string): boolean {
 			for (let prj of this.projects) {
-        if (name == prj) {
-          return true
-        }
-      }
+				if (name == prj) {
+					return true
+				}
+			}
 			return false
 		}
 
@@ -108,99 +106,98 @@ interface TranslateList {
 			return "/" + this.getRoot() + "/code/hi" + element + ".hws"
 		}
 
-		load() {
-      console.log('Load pack:', this.name)
-			API.get(this.getRoot() + "/lang/" + translate.getLang() + ".json", (data) => {
-				this.strings = JSON.parse(data);
+		setLang(js: any) {
+			this.strings = js;
+		}
 
-				API.get(this.getRoot() + "/pack.json", (data) => {
-					let js = JSON.parse(data);
-					this.projects = js.projects;
-					this.make = js.make || [];
-					if (this.make.length) {
-            this.make[0].selected = true
-          }
-					this.title = js.title;
-					this.run = js.run || { mode: "none" };
-					if (js.namesmap) {
-            this.namesmap = js.namesmap
-          }
-					if (js.editors) {
-						for (let e in js.editors) {
-							if (window[e]) {
-								this.editors[window[e]] = js.editors[e]
-							}
+		setPack(js: any) {
+			this.projects = js.projects;
+			this.make = js.make || [];
+			if (this.make.length) {
+				this.make[0].selected = true
+			}
+			this.title = js.title;
+			this.run = js.run || { mode: "none" };
+			if (js.namesmap) {
+				this.namesmap = js.namesmap
+			}
+			if (js.editors) {
+				for (let e in js.editors) {
+					if (window[e]) {
+						this.editors[window[e]] = js.editors[e]
+					}
+				}
+			}
+			if (js.style) {
+				let styles = document.createElement('link')
+				styles.rel = 'stylesheet'
+				styles.type = 'text/css'
+				styles.href = this.getRoot() + '/' + js.style
+				document.getElementsByTagName('head')[0].appendChild(styles)
+			}
+		}
+
+		setElements(js: any) {
+			this.elements = js;
+			for (let e in this.elements) {
+				let element = this.elements[e]
+				if (element.points) {
+					for (let point of element.points) {
+						point.inherit = e
+					}
+				}
+				// lang info generator
+				// var k = "el." + e;
+				// if(element.points && pack.translate(k) === k) {
+				// 	var info = '"' + k + '": "",\n';
+				// 	for(var point of element.points) {
+				// 		info += '"' + e + "." + point.name + '": "",\n';
+				// 	}
+				// 	console.log(info);
+				// }
+				// check translation
+				// if(pack.name == "modules") {
+				// 	if(element.points) {
+				// 		for(var point of element.points) {
+				// 			if(pack.translate(e + "." + point.name) === e + "." + point.name)
+				// 				console.log(e, point.name);
+				// 		}
+				// 	}
+				// 	if(element.props) {
+				// 		for(var prop of element.props) {
+				// 			if(pack.translate(e + "." + prop.name) === e + "." + prop.name)
+				// 				console.log(e, prop.name);
+				// 		}
+				// 	}
+				// }
+			}
+			// inherit elements from base package
+			if (this.parent) {
+				for (let e in this.elements) {
+					if (this.parent.elements[e]) {
+						let newElement = {}
+						// inherit parent element
+	  					Object.assign(newElement, this.parent.elements[e] as any)
+						// overflow parent fields
+						Object.assign(newElement, this.elements[e])
+						this.elements[e] = newElement as ElementTemplate
+
+						// create new instance of icon
+						if (this.elements[e].icon) {
+							let icon = new Image()
+							icon.src = this.elements[e].icon.src
+							this.elements[e].icon = icon
 						}
 					}
-					if (js.style) {
-						let styles = document.createElement('link')
-						styles.rel = 'stylesheet'
-						styles.type = 'text/css'
-						styles.href = this.getRoot() + '/' + js.style
-						document.getElementsByTagName('head')[0].appendChild(styles)
-					}
+				}
+			}
+			this.loadIcons()
+		}
 
-					API.get(this.getRoot() + "/elements.json", (data) => {
-						this.elements = JSON.parse(data);
-						for (let e in this.elements) {
-							let element = this.elements[e]
-							if (element.points) {
-								for (let point of element.points) {
-									point.inherit = e
-								}
-							}
-							// lang info generator
-							// var k = "el." + e;
-							// if(element.points && pack.translate(k) === k) {
-							// 	var info = '"' + k + '": "",\n';
-							// 	for(var point of element.points) {
-							// 		info += '"' + e + "." + point.name + '": "",\n';
-							// 	}
-							// 	console.log(info);
-							// }
-							// check translation
-							// if(pack.name == "modules") {
-							// 	if(element.points) {
-							// 		for(var point of element.points) {
-							// 			if(pack.translate(e + "." + point.name) === e + "." + point.name)
-							// 				console.log(e, point.name);
-							// 		}
-							// 	}
-							// 	if(element.props) {
-							// 		for(var prop of element.props) {
-							// 			if(pack.translate(e + "." + prop.name) === e + "." + prop.name)
-							// 				console.log(e, prop.name);
-							// 		}
-							// 	}
-							// }
-						}
-						// inherit elements from base package
-						if (this.parent) {
-							for (let e in this.elements) {
-								if (this.parent.elements[e]) {
-									let newElement = {}
-									// inherit parent element
-                  Object.assign(newElement, this.parent.elements[e] as any)
-									// overflow parent fields
-									Object.assign(newElement, this.elements[e])
-									this.elements[e] = newElement as ElementTemplate
-
-									// create new instance of icon
-									if (this.elements[e].icon) {
-										let icon = new Image()
-										icon.src = this.elements[e].icon.src
-										this.elements[e].icon = icon
-									}
-								}
-							}
-						}
-
-						$.appendScript(this.getRoot() + "/core.js", () => {
-							this.core = new window[this.name]()
-							this.loadIcons()
-						})
-					})
-				})
+		loadCore(cb: () => void) {
+			$.appendScript(this.getRoot() + "/core.js", () => {
+				this.core = new window[this.name]()
+				cb()
 			})
 		}
 
@@ -212,7 +209,7 @@ interface TranslateList {
 
 					let icon = new Image()
 					icon.src = this.getRoot() + "/icons/" + id + ".ico"
-					icon.onerror = () => { icon.src = "/pack/base/icons/nil.png" }
+					icon.onerror = () => { icon.src = "pack/base/icons/nil.png" }
 					icon.onload = () => this._loadImage()
 
 					element.icon = icon

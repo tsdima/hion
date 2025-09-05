@@ -28,6 +28,7 @@ import { SHATab } from './ui/panels/document-manager/tabs/SHATab'
 import { Runner } from './tools/Runner'
 import { Hion } from './core/element'
 import { UI } from './ui/controls'
+import { VSCodeFSNode } from './fs/VSCodeFSNode'
 
 export var mainMenu: MainMenu = null
 export var userMenu: MainMenu = null
@@ -100,12 +101,13 @@ export var user: { login: string, uid: number, plan: any } = null
 		window.location.reload();
 	}
 
+	var onpacksloaded: any;
 	export function loadWorkspace() {
 		const workspace = new Workspace({})
 		workspace.appendTo($.get("workspace"))
 
 		const loader = new Loader({ haveState: true });
-		loader.onload = function() {
+		onpacksloaded = function() {
 			const tbCommands = ["-", "new", "open", "save", "saveas", "-", "formedit", "bind_rect", "bind_center", "bind_padding", "-", "back", "forward", "-", "delete", "-", "run", "build", "-", "about"];
 			const buttons = []
 			for (const i in tbCommands) {
@@ -166,13 +168,6 @@ export var user: { login: string, uid: number, plan: any } = null
 				docManager.open(window.location.hash.substring(1), "")
 			}
 		};
-		let packList = []
-		loader.add(new LoaderTask(task => {
-			API.get("/pack/list.txt", (data: string) => {
-				packList = data.trim().split("\n")
-				task.taskComplete("Pack list loaded.")
-			})
-		}))
 		loader.add(new LoaderTask(task => {
 			API.get(API_CONFIG_URL, (data: string) => {
 				try {
@@ -185,21 +180,10 @@ export var user: { login: string, uid: number, plan: any } = null
 				task.taskComplete("Config loaded.")
 			})
 		}))
-		loader.add(new LoaderTask(task => {
-			translate = new Translate()
-			// _T = translate.translate
-			translate.onload = () => task.taskComplete("Translate loaded.")
-			translate.load()
-			Hion.translate = translate
-		}))
-		loader.add(new LoaderTask(task => {
-			packMan = new PackManager()
-			packMan.onload = () => task.taskComplete("Packs load.");
-			packMan.task = task
-			packMan.load(packList)
-		}));
-
 		loader.run();
+
+		user = {login: "guest", uid: 1, plan: {}}
+		API.postMessage({type:'onready'})
 
 		palette = new Palette({width: getOptionInt("palette_width", 142)});
 		palette.onselect = function(obj) {
@@ -408,6 +392,26 @@ export var user: { login: string, uid: number, plan: any } = null
 		if((!document.activeElement || document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") && commander.execShortCut(event)) {
 			event.preventDefault();
 			return false;
+		}
+		return true
+	})
+
+	window.addEventListener("message", function(event){
+		let message = event.data;
+		switch(message.type) {
+		case 'dosetpacks':
+			translate = new Translate();
+			translate.strings = message.lang;
+			Hion.translate = translate
+			packMan = new PackManager();
+			packMan.setPacks(message.packs, ()=>{ API.postMessage({type:'onsetpacks'}); onpacksloaded(); }, ()=>{ docManager.resize(); });
+			break;
+		case 'update':
+			docManager.openFile(new VSCodeFSNode(message.name, message.text), '');
+			break;
+		default:
+			console.log(JSON.stringify(message));
+			break;
 		}
 		return true
 	})

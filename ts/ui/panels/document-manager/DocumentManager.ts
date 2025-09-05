@@ -162,7 +162,7 @@ export class DocumentManager extends UIContainer {
     this.insert(tab, this.splitter2);
   }
 
-  openByType(Class, file: FSNode, title: string, asNew: boolean) {
+  openByType(Class: any, file: FSNode, title: string, asNew: boolean) {
     if(file && !asNew) {
       console.log("Open: ", file.location());
     }
@@ -186,14 +186,26 @@ export class DocumentManager extends UIContainer {
   }
 
   openFile(file: FSNode, title: string) {
-    for (const obj of extMap) {
-      if (file.name.match(obj.ext)) {
-        this.openByType(obj.tab, file, title, false);
-        return;
+    // tab is already open?
+    let fTab: ContentTab = null
+    this.tabs.each(function(tab: ContentTab){
+      if(tab.content?.file?.location() == file.location()) {
+        fTab = tab
       }
-    }
+    })
 
-    this.openByType(SHATab, file, title, false);
+    if(fTab) {
+      fTab.content.open(file, false);
+    } else {
+      for (const obj of extMap) {
+        if (file.name.match(obj.ext)) {
+          this.openByType(obj.tab, file, title, false);
+          return;
+        }
+      }
+
+      this.openByType(SHATab, file, title, false);
+    }
   }
 
   open(fileName: string, title: string) {
@@ -267,7 +279,7 @@ export class DocumentManager extends UIContainer {
   }
 
   saveOpenTabs() {
-    if(getOptionBool("opt_save_tabs", 1)) {
+    /*if(getOptionBool("opt_save_tabs", 1)) {
       const openFiles = []
       this.tabs.each(function(tab: ContentTab){
         if (tab.content && tab.content.file) {
@@ -275,11 +287,11 @@ export class DocumentManager extends UIContainer {
         }
       })
       setOption('opentabs', JSON.stringify(openFiles))
-    }
+    }*/
   }
 
   init() {
-    if(getOptionBool("opt_save_tabs", 1)) {
+    /*if(getOptionBool("opt_save_tabs", 1)) {
       const data = getOption('opentabs', '')
       if (data) {
         const openFiles = JSON.parse(data)
@@ -291,7 +303,7 @@ export class DocumentManager extends UIContainer {
       if (getOptionBool("opt_new_project", 0)) {
         commander.execCommand("new")
       }
-    }
+    }*/
   }
 
   showState(value) {

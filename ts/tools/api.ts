@@ -1,6 +1,14 @@
+declare const acquireVsCodeApi: any;
+
 type ResponseData = (data: string, object?: object) => void
 
 export class API {
+  public static vscode: any = acquireVsCodeApi();
+
+  public static postMessage(data: any) {
+    this.vscode.postMessage(data);
+  }
+
   public static get(url: string, callback: ResponseData, object?: object) {
     if (url.match(/^\/server\//)) {
       callback("{}", object);
