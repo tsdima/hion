@@ -20,6 +20,7 @@ import { getFileNode } from '../../../fs/FileSystem'
 import { Runner } from '../../../tools/Runner'
 import { Commander } from '../../../tools/Commander'
 import { StartupTab } from './tabs/StartupTab'
+import { API } from '../../../tools/api'
 
 const extMap = [
   { ext: /.*\.sha$/i, tab: SHATab },
@@ -274,7 +275,7 @@ export class DocumentManager extends UIContainer {
       }
     }
     new Runner("new", (data: string[]) => {
-      this.openByType(SHATab, getFileNode("/pack/" + data[0] + "/new/" + data[1] + ".sha"), "", true);
+      API.postMessage({type:'new', pack:data[0], item:data[1]});
     }).run(args);
   }
 

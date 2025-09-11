@@ -4,18 +4,34 @@ import { getNonce } from './util';
 class shaEditor {
 
 	public static activeEditor: shaEditor | null = null;
+	public static newText: string = '';
 
 	constructor(
 		public readonly document: vscode.TextDocument,
 		public readonly webviewPanel: vscode.WebviewPanel
 	) {}
 
+	public static setText(document: vscode.TextDocument, text: string) : Thenable<boolean> {
+		const edit = new vscode.WorkspaceEdit();
+		const r = new vscode.Range(0,0,document.lineCount,0);
+		edit.replace(document.uri, document.validateRange(r), text);
+		return vscode.workspace.applyEdit(edit);
+	}
+
 	public updateWebview() {
-		this.webviewPanel.webview.postMessage({
-			type: 'update',
-			name: this.document.fileName,
-			text: this.document.getText()
-		});
+		if (this.document.fileName=='') {
+			this.webviewPanel.webview.postMessage({
+				type: 'update',
+				name: 'Project',
+				text: shaEditor.newText
+			});
+		} else {
+			this.webviewPanel.webview.postMessage({
+				type: 'update',
+				name: this.document.fileName,
+				text: this.document.getText()
+			});
+		}
 	}
 
 }
@@ -33,6 +49,7 @@ export class shaEditorProvider implements vscode.CustomTextEditorProvider {
 	private distUri: vscode.Uri;
 	private packUri: vscode.Uri;
 	private lang: any;
+	private proj: any;
 	private packs: Promise<any>;
 	private canupdate: boolean = true;
 
@@ -44,39 +61,31 @@ export class shaEditorProvider implements vscode.CustomTextEditorProvider {
 		this.packs = this.loadPacks();
 	}
 
-	private loadPack(name: string) : Promise<any> {
-		return new Promise((resolve, reject) => {
-			let fs = vscode.workspace.fs; let obj: any = { name:name };
-			const langUri = vscode.Uri.joinPath(this.packUri, name, 'lang', 'ru.json');
-			const packUri = vscode.Uri.joinPath(this.packUri, name, 'pack.json');
-			const elemUri = vscode.Uri.joinPath(this.packUri, name, 'elements.json');
-			fs.readFile(langUri).then((value:Uint8Array)=>{
-				obj.lang = JSON.parse(value.toString());
-				return fs.readFile(packUri);
-			}).then((value:Uint8Array)=>{
-				obj.pack = JSON.parse(value.toString());
-				return fs.readFile(elemUri);
-			}).then((value:Uint8Array)=>{
-				obj.elements = JSON.parse(value.toString());
-				return obj;
-			}).then(resolve);
-		});
+	private async loadProject(name: string, prj: string) : Promise<any> {
+		const projUri = vscode.Uri.joinPath(this.packUri, name, 'new', prj+'.sha');
+		const value = await vscode.workspace.fs.readFile(projUri);
+		return { name: prj, text: value.toString() };
 	}
 
-	private loadPacks() : Promise<any> {
-		return new Promise((resolve, reject) => {
-			let fs = vscode.workspace.fs;
-			const langUri = vscode.Uri.joinPath(this.distUri, 'lang', 'ru.json');
-			const listUri = vscode.Uri.joinPath(this.packUri, 'list.txt');
-			fs.readFile(langUri).then((value:Uint8Array)=>{
-				this.lang = JSON.parse(value.toString());
-				return fs.readFile(listUri);
-			}).then((value:Uint8Array)=>{
-				let p: Promise<any>[] = [];
-				value.toString().split('\n').forEach(item => { p.push(this.loadPack(item)) });
-				return Promise.all(p);
-			}).then(resolve);
-		});
+	private async loadPack(name: string) : Promise<any> {
+		let fs = vscode.workspace.fs; let obj: any = { name:name }; this.proj[name] = {}
+		const langUri = vscode.Uri.joinPath(this.packUri, name, 'lang', 'ru.json');
+		const packUri = vscode.Uri.joinPath(this.packUri, name, 'pack.json');
+		const elemUri = vscode.Uri.joinPath(this.packUri, name, 'elements.json');
+		obj.lang = JSON.parse((await fs.readFile(langUri)).toString());
+		obj.pack = JSON.parse((await fs.readFile(packUri)).toString());
+		obj.elements = JSON.parse((await fs.readFile(elemUri)).toString());
+		const prj = await Promise.all(obj.pack.projects.map((prj:string) => this.loadProject(name, prj)));
+		prj.forEach((value:any) => { this.proj[name][value.name] = value.text; });
+		return obj;
+	}
+
+	private async loadPacks() : Promise<any> {
+		let fs = vscode.workspace.fs; this.proj = {};
+		const langUri = vscode.Uri.joinPath(this.distUri, 'lang', 'ru.json');
+		const listUri = vscode.Uri.joinPath(this.packUri, 'list.txt');
+		this.lang = JSON.parse((await fs.readFile(langUri)).toString());
+		return Promise.all((await fs.readFile(listUri)).toString().split('\n').map(item => this.loadPack(item)));
 	}
 
 	public async resolveCustomTextEditor(
@@ -109,15 +118,16 @@ export class shaEditorProvider implements vscode.CustomTextEditorProvider {
 				break;
 			case 'onsetpacks': editor.updateWebview(); break;
 			case 'onsavefile':
-				const edit = new vscode.WorkspaceEdit();
-				const r = new vscode.Range(0,0,document.lineCount,0);
 				this.canupdate = false;
-				edit.replace(document.uri, document.validateRange(r), e.text);
-				vscode.workspace.applyEdit(edit).then(ok=>{
+				shaEditor.setText(document, e.text).then(ok=>{
 					document.save().then(ok=>{
 						this.canupdate = true;
 					});
 				});
+				break;
+			case 'new':
+				shaEditor.newText = this.proj[e.pack][e.item];
+				vscode.commands.executeCommand('workbench.action.files.newUntitledFile', {viewType:'shaEditorView'});
 				break;
 			}
 		});
