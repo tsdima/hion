@@ -45,6 +45,7 @@ export class UIContainer extends UIControl {
 
   public remove(control: UIControl) {
     this.child.delete(control)
+    control.parent = null
 
     this.getContainer().removeChild(control.getControl())
   }

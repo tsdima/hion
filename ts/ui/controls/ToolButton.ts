@@ -90,6 +90,6 @@ export class ToolButton extends UIControl {
   }
 
   public get checked(): boolean {
-    return this._ctl.getAttribute("checked") !== 'true'
+    return this._ctl.getAttribute("checked") == 'true'
   }
 }
