@@ -2,8 +2,13 @@ type ResponseData = (data: string, object?: object) => void
 
 export class API {
   public static get(url: string, callback: ResponseData, object?: object) {
-    if (url.match(/^\/server\//)) {
-      callback("{}", object);
+    const m = url.match(/^\/server\/core\.php\??([^=]*)=?(.*)/);
+    if (m) {
+      switch(m[1]) {
+      case 'cfg': callback('{"uid":0,"login":"Local","plan":{"name":"Local","builds":9999,"remoteprj":0,"storage":0,"share":0,"history":0,"support":0,"catalog":0,"totalbuilds":0,"totalprj":0,"totalstorage":0}}', object); break;
+      case 'dir': callback("[]", object); break;
+      default: callback("{}", object); break;
+      }
       return;
     }
     if (url.match(/^\//)) url = url.substring(1);
