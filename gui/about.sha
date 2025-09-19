@@ -20,7 +20,7 @@ Add(Image,24,140,56)
   Top=14
   Width=#2:21|
   Height=#2:18|
-  URL=#13:/img/hion.png|
+  URL=#12:img/hion.png|
 }
 Add(Label,25,203,56)
 {

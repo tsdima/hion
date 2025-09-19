@@ -93,7 +93,7 @@ Add(ArrayBuilder,55,308,273)
 }
 Add(FormatStr,56,308,210)
 {
-  Mask=#21:/pack/%2/icons/%1.ico|
+  Mask=#20:pack/%2/icons/%1.ico|
   link(Str2,111:Var2,[])
 }
 Add(FormatStr,67,294,84)
